@@ -1,0 +1,66 @@
+trigger: none
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      endpoint: Planning-Inspectorate
+      name: Planning-Inspectorate/common-pipeline-templates
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: Plan
+    displayName: Terraform Plan
+    jobs:
+      - job: Plan
+        displayName: Terraform Plan
+        steps:
+          - task: AzureCLI@2
+            displayName: Azure Authentication
+            inputs:
+              scriptType: bash
+              scriptLocation: inlineScript
+              azureSubscription: Terraform Tooling
+              addSpnToEnvironment: true
+              inlineScript: |
+                echo "##vso[task.setvariable variable=azureClientId]$servicePrincipalId"
+                echo "##vso[task.setvariable variable=azureClientSecret]$servicePrincipalKey"
+                echo "##vso[task.setvariable variable=azureTenantId]$tenantId"
+          - script: |
+              terraform init
+              terraform plan
+            displayName: Terragrunt Plan
+            env:
+              ARM_CLIENT_ID: $(azureClientId)
+              ARM_CLIENT_SECRET: $(azureClientSecret)
+              ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(azureTenantId)
+  - stage: Apply
+    dependsOn: Plan
+    displayName: Terraform Apply
+    jobs:
+      - job: Apply
+        displayName: Terraform Apply
+        steps:
+          - task: AzureCLI@2
+            displayName: Azure Authentication
+            inputs:
+              scriptType: bash
+              scriptLocation: inlineScript
+              azureSubscription: Terraform Dev
+              addSpnToEnvironment: true
+              inlineScript: |
+                echo "##vso[task.setvariable variable=azureClientId]$servicePrincipalId"
+                echo "##vso[task.setvariable variable=azureClientSecret]$servicePrincipalKey"
+                echo "##vso[task.setvariable variable=azureTenantId]$tenantId"
+          - script: |
+              terraform init
+              terraform apply
+            displayName: Terragrunt Apply
+            env:
+              ARM_CLIENT_ID: $(azureClientId)
+              ARM_CLIENT_SECRET: $(azureClientSecret)
+              ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(azureTenantId)

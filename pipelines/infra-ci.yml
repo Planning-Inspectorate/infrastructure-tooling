@@ -1,0 +1,29 @@
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      endpoint: Planning-Inspectorate
+      name: Planning-Inspectorate/common-pipeline-templates
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: Validate
+    displayName: Validate Terraform
+    jobs:
+      - job: Validate
+        displayName: Validate Terraform
+        steps:
+          - script: |
+              brew install tflint
+              brew install checkov
+            displayName: Install dependencies
+          - template: steps/terraform_format.yml@templates
+          - template: steps/terraform_tflint.yml@templates
+          - template: steps/run_checkov.yml@templates
+          - script: |
+              terraform init -backend=false
+              terraform validate
+            displayName: Terraform Validate
+            workingDirectory: $(Build.Repository.LocalPath)
