@@ -55,7 +55,7 @@ stages:
                 - task: DownloadPipelineArtifact@2
                   inputs:
                     artifact: infrastructure-tooling
-                    path: $(Pipeline.Workspace)/infrastructure-tooling
+                    path: $(Pipeline.Workspace)
                     pipeline: infrastructure-tooling CI
                     project: $(System.TeamProject)
                     source: specific
