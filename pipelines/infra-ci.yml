@@ -26,4 +26,16 @@ stages:
               terraform init -backend=false
               terraform validate
             displayName: Terraform Validate
-            workingDirectory: $(Build.Repository.LocalPath)
+            workingDirectory: $(Build.Repository.LocalPath)/infrastructure
+          - task: CopyFiles@2
+            displayName: Copy source to artifact
+            inputs:
+              SourceFolder: $(Build.Repository.LocalPath)
+              Contents: |
+                **/*
+                !.git/**/*
+                !**/.terraform/**/*
+              TargetFolder: $(Build.ArtifactStagingDirectory)
+          - publish: $(Build.ArtifactStagingDirectory)
+            artifact: infrastructure-tooling
+            displayName: Publish sources

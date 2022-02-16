@@ -52,6 +52,13 @@ stages:
           runOnce:
             deploy:
               steps:
+                - task: DownloadPipelineArtifact@2
+                    inputs:
+                      artifact: infrastructure-tooling
+                      path: $(Pipeline.Workspace)/infrastructure-tooling
+                      pipeline: infrastructure-tooling CI
+                      project: $(System.TeamProject)
+                      source: specific
                 - task: AzureCLI@2
                   displayName: Azure Authentication
                   inputs:
