@@ -5,9 +5,8 @@ resource "azurerm_container_registry" "acr" {
   sku                 = "Premium"
 
   georeplications {
-    location                = module.azure_region_secondary.location
-    zone_redundancy_enabled = true
-    tags                    = merge(local.tags, { Region = var.secondary_region })
+    location = module.azure_region_secondary.location
+    tags     = merge(local.tags, { Region = var.secondary_region })
   }
 
   tags = local.tags
