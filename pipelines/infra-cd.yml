@@ -44,9 +44,9 @@ stages:
           - task: CopyFiles@2
             displayName: Copy tfplan to artifact
             inputs:
-              SourceFolder: $(Build.Repository.LocalPath)
+              SourceFolder: $(Build.Repository.LocalPath)/infrastructure
               Contents: |
-                $(Build.Repository.LocalPath)/infrastructure/tfplan
+                tfplan
               TargetFolder: $(Build.ArtifactStagingDirectory)
           - publish: $(Build.ArtifactStagingDirectory)
             artifact: terraform-plan
