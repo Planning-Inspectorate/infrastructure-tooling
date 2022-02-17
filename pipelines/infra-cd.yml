@@ -41,6 +41,18 @@ stages:
               ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
               ARM_TENANT_ID: $(azureTenantId)
             workingDirectory: $(Build.Repository.LocalPath)/infrastructure
+          - task: CopyFiles@2
+            displayName: Copy source to artifact
+            inputs:
+              SourceFolder: $(Build.Repository.LocalPath)
+              Contents: |
+                **/*
+                !.git/**/*
+                !**/.terraform/**/*
+              TargetFolder: $(Build.ArtifactStagingDirectory)
+          - publish: $(Build.ArtifactStagingDirectory)
+            artifact: infrastructure-tooling
+            displayName: Publish sources
   - stage: Apply
     dependsOn: Plan
     displayName: Terraform Apply
@@ -52,13 +64,6 @@ stages:
           runOnce:
             deploy:
               steps:
-                - task: DownloadPipelineArtifact@2
-                  inputs:
-                    artifact: infrastructure-tooling
-                    path: $(Pipeline.Workspace)
-                    pipeline: infrastructure-tooling CI
-                    project: $(System.TeamProject)
-                    source: specific
                 - task: AzureCLI@2
                   displayName: Azure Authentication
                   inputs:

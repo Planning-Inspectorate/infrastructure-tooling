@@ -22,20 +22,9 @@ stages:
           - template: steps/terraform_format.yml@templates
           - template: steps/terraform_tflint.yml@templates
           - template: steps/run_checkov.yml@templates
-          - script: |
-              terraform init -backend=false
-              terraform validate
-            displayName: Terraform Validate
-            workingDirectory: $(Build.Repository.LocalPath)/infrastructure
-          - task: CopyFiles@2
-            displayName: Copy source to artifact
-            inputs:
-              SourceFolder: $(Build.Repository.LocalPath)
-              Contents: |
-                **/*
-                !.git/**/*
-                !**/.terraform/**/*
-              TargetFolder: $(Build.ArtifactStagingDirectory)
-          - publish: $(Build.ArtifactStagingDirectory)
-            artifact: infrastructure-tooling
-            displayName: Publish sources
+          - template: steps/terraform_validate.yml@templates
+            parameters:
+              workingDirectory: $(Build.Repository.LocalPath)/infrastructure
+          - template: steps/git_tagging.yml@templates
+            parameters:
+              tagPrefix: infrastructure-tooling
