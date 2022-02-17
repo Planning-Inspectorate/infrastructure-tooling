@@ -1,0 +1,89 @@
+trigger: none
+
+pr: none
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      endpoint: Planning-Inspectorate
+      name: Planning-Inspectorate/common-pipeline-templates
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  SUBSCRIPTION_ID: edb1ff78-90da-4901-a497-7e79f966f8e2
+
+stages:
+  - stage: Plan
+    displayName: Terraform Plan
+    jobs:
+      - job: Plan
+        displayName: Terraform Plan
+        steps:
+          - task: AzureCLI@2
+            displayName: Azure Authentication
+            inputs:
+              scriptType: bash
+              scriptLocation: inlineScript
+              azureSubscription: Terraform Tooling
+              addSpnToEnvironment: true
+              inlineScript: |
+                echo "##vso[task.setvariable variable=azureClientId]$servicePrincipalId"
+                echo "##vso[task.setvariable variable=azureClientSecret]$servicePrincipalKey"
+                echo "##vso[task.setvariable variable=azureTenantId]$tenantId"
+          - script: |
+              terraform init -input=false
+              terraform plan -out=tfplan -input=false
+            displayName: Terraform Plan
+            env:
+              ARM_CLIENT_ID: $(azureClientId)
+              ARM_CLIENT_SECRET: $(azureClientSecret)
+              ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(azureTenantId)
+            workingDirectory: $(Build.Repository.LocalPath)/infrastructure
+          - task: CopyFiles@2
+            displayName: Copy tfplan to artifact
+            inputs:
+              SourceFolder: $(Build.Repository.LocalPath)/infrastructure
+              Contents: |
+                .terraform/**
+                .terraform.lock.hcl
+                tfplan
+              TargetFolder: $(Build.ArtifactStagingDirectory)
+          - publish: $(Build.ArtifactStagingDirectory)
+            artifact: terraform-plan
+            displayName: Publish sources
+  - stage: Apply
+    dependsOn: Plan
+    displayName: Terraform Apply
+    jobs:
+      - deployment: Apply
+        displayName: Terraform Apply
+        environment: Tooling
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureCLI@2
+                  displayName: Azure Authentication
+                  inputs:
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    azureSubscription: Terraform Tooling
+                    addSpnToEnvironment: true
+                    inlineScript: |
+                      echo "##vso[task.setvariable variable=azureClientId]$servicePrincipalId"
+                      echo "##vso[task.setvariable variable=azureClientSecret]$servicePrincipalKey"
+                      echo "##vso[task.setvariable variable=azureTenantId]$tenantId"
+                - script: |
+                    chmod -R +x .
+                    terraform apply -input=false tfplan
+                  displayName: Terraform Apply
+                  env:
+                    ARM_CLIENT_ID: $(azureClientId)
+                    ARM_CLIENT_SECRET: $(azureClientSecret)
+                    ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+                    ARM_TENANT_ID: $(azureTenantId)
+                  workingDirectory: $(Pipeline.Workspace)/terraform-plan
