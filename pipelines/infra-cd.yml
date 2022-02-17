@@ -46,7 +46,8 @@ stages:
             inputs:
               SourceFolder: $(Build.Repository.LocalPath)/infrastructure
               Contents: |
-                .terraform
+                .terraform/*
+                .terraform.lock.hcl
                 tfplan
               TargetFolder: $(Build.ArtifactStagingDirectory)
           - publish: $(Build.ArtifactStagingDirectory)
