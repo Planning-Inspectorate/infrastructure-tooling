@@ -78,10 +78,10 @@ stages:
                 - script: |
                     terraform init
                     terraform apply
-                  displayName: Terragrunt Apply
+                  displayName: Terraform Apply
                   env:
                     ARM_CLIENT_ID: $(azureClientId)
                     ARM_CLIENT_SECRET: $(azureClientSecret)
                     ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
                     ARM_TENANT_ID: $(azureTenantId)
-                  workingDirectory: $(Build.Repository.LocalPath)/infrastructure
+                  workingDirectory: $(Pipeline.Workspace)/infrastructure-tooling/infrastructure
