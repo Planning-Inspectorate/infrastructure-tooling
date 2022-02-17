@@ -34,7 +34,7 @@ stages:
           - script: |
               terraform init -input=false
               terraform plan -out=tfplan -input=false
-            displayName: Terragrunt Plan
+            displayName: Terraform Plan
             env:
               ARM_CLIENT_ID: $(azureClientId)
               ARM_CLIENT_SECRET: $(azureClientSecret)
