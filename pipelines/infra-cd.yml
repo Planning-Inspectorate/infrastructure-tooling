@@ -32,8 +32,8 @@ stages:
                 echo "##vso[task.setvariable variable=azureClientSecret]$servicePrincipalKey"
                 echo "##vso[task.setvariable variable=azureTenantId]$tenantId"
           - script: |
-              terraform init
-              terraform plan
+              terraform init -input=false
+              terraform plan -out=tfplan -input=false
             displayName: Terragrunt Plan
             env:
               ARM_CLIENT_ID: $(azureClientId)
@@ -42,16 +42,14 @@ stages:
               ARM_TENANT_ID: $(azureTenantId)
             workingDirectory: $(Build.Repository.LocalPath)/infrastructure
           - task: CopyFiles@2
-            displayName: Copy source to artifact
+            displayName: Copy tfplan to artifact
             inputs:
               SourceFolder: $(Build.Repository.LocalPath)
               Contents: |
-                **/*
-                !.git/**/*
-                !**/.terraform/**/*
+                $(Build.Repository.LocalPath)/infrastructure/tfplan
               TargetFolder: $(Build.ArtifactStagingDirectory)
           - publish: $(Build.ArtifactStagingDirectory)
-            artifact: infrastructure-tooling
+            artifact: terraform-plan
             displayName: Publish sources
   - stage: Apply
     dependsOn: Plan
@@ -76,12 +74,10 @@ stages:
                       echo "##vso[task.setvariable variable=azureClientSecret]$servicePrincipalKey"
                       echo "##vso[task.setvariable variable=azureTenantId]$tenantId"
                 - script: |
-                    terraform init
-                    terraform apply
+                    terraform apply -input=false $(Pipeline.Workspace)/terraform-plan/tfplan
                   displayName: Terraform Apply
                   env:
                     ARM_CLIENT_ID: $(azureClientId)
                     ARM_CLIENT_SECRET: $(azureClientSecret)
                     ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
                     ARM_TENANT_ID: $(azureTenantId)
-                  workingDirectory: $(Pipeline.Workspace)/infrastructure-tooling/infrastructure
