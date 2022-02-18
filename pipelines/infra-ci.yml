@@ -15,6 +15,9 @@ stages:
       - job: Validate
         displayName: Validate Terraform
         steps:
+          - checkout: self
+            clean: true
+            persistCredentials: true
           - script: |
               brew install tflint
               brew install checkov
