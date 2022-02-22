@@ -15,7 +15,7 @@ stages:
             inputs:
               command: buildAndPush
               repository: tooling-pipeline-agents-vm
-              dockerfile: docker/Dockerfile
+              dockerfile: pipelines/docker/Dockerfile
               containerRegistry: Container Registry
               tags: latest
         workspace:

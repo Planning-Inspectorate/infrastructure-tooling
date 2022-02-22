@@ -1,3 +1,5 @@
+#checkov:skip=CKV_DOCKER_2: Healthcheck not required as container not long lived
+#checkov:skip=CKV_DOCKER_3: User not required
 FROM ubuntu:20.04
 
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
