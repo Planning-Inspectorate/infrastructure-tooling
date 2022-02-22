@@ -9,6 +9,10 @@ resources:
       endpoint: Planning-Inspectorate
       name: Planning-Inspectorate/common-pipeline-templates
       ref: feature/jobs-container-option
+  containers:
+    - container: terraform-tools
+      image: terraform-tools
+      endpoint: Container Registry
 
 pool:
   vmImage: ubuntu-latest
