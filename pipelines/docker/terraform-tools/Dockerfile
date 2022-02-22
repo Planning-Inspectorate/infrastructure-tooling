@@ -40,4 +40,7 @@ RUN python3.7 -m pip install -U checkov
 # TFLint
 RUN curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
+# Azure CLI
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
 CMD /bin/sh
