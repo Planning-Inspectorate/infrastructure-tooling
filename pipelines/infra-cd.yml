@@ -18,6 +18,7 @@ extends:
     deploymentStages:
       - name: Terraform Plan
         azureLogin: true
+        container: terraform-tools
         deploymentSteps:
           - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_plan.yml@templates
             parameters:
@@ -25,6 +26,7 @@ extends:
               workingDirectory: $(Build.Repository.LocalPath)/infrastructure
         isDeployment: false
       - name: Terraform Apply
+        container: terraform-tools
         dependsOn:
           - Terraform Plan
         deploymentSteps:

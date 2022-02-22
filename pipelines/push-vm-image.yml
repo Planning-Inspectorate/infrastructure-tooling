@@ -14,8 +14,8 @@ stages:
             displayName: Build and push an image to container registry
             inputs:
               command: buildAndPush
-              repository: tooling-pipeline-agents-vm
-              dockerfile: pipelines/docker/Dockerfile
+              repository: terraform-tools
+              dockerfile: pipelines/docker/terraform-tools/Dockerfile
               containerRegistry: Container Registry
               tags: latest
         workspace:
