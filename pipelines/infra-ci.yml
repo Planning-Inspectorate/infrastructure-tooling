@@ -8,26 +8,22 @@ resources:
 pool:
   vmImage: ubuntu-latest
 
-stages:
-  - stage: Validate
-    displayName: Validate Terraform
-    jobs:
-      - job: Validate
-        displayName: Validate Terraform
-        steps:
-          - checkout: self
-            clean: true
-            persistCredentials: true
-          - script: |
-              brew install tflint
-              brew install checkov
-            displayName: Install dependencies
-          - template: steps/terraform_format.yml@templates
-          - template: steps/terraform_tflint.yml@templates
-          - template: steps/run_checkov.yml@templates
-          - template: steps/terraform_validate.yml@templates
-            parameters:
-              workingDirectory: $(Build.Repository.LocalPath)/infrastructure
-          - template: steps/git_tagging.yml@templates
-            parameters:
-              tagPrefix: infrastructure-tooling
+extends:
+  template: stages/wrapper_ci.yml@templates
+  parameters:
+    project: infrastructure
+    validateName: Validate Terraform
+    validationSteps:
+      - script: |
+          brew install tflint
+          brew install checkov
+        displayName: Install dependencies
+      - template: steps/terraform_format.yml@templates
+      - template: steps/terraform_tflint.yml@templates
+      - template: steps/run_checkov.yml@templates
+      - template: steps/terraform_validate.yml@templates
+        parameters:
+          workingDirectory: $(Build.Repository.LocalPath)/infrastructure
+      - template: steps/git_tagging.yml@templates
+        parameters:
+          tagPrefix: infrastructure-tooling
