@@ -24,6 +24,3 @@ extends:
       - template: steps/terraform_validate.yml@templates
         parameters:
           workingDirectory: $(Build.Repository.LocalPath)/infrastructure
-      - template: steps/git_tagging.yml@templates
-        parameters:
-          tagPrefix: infrastructure-tooling
