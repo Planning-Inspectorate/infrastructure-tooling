@@ -8,6 +8,10 @@ resources:
       type: github
       endpoint: Planning-Inspectorate
       name: Planning-Inspectorate/common-pipeline-templates
+  containers:
+    - container: terraform-tools
+      image: terraform-tools
+      endpoint: Container Registry
 
 pool:
   vmImage: ubuntu-latest
@@ -18,6 +22,7 @@ extends:
     deploymentStages:
       - name: Terraform Plan
         azureLogin: true
+        container: terraform-tools
         deploymentSteps:
           - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_plan.yml@templates
             parameters:
@@ -25,6 +30,7 @@ extends:
               workingDirectory: $(Build.Repository.LocalPath)/infrastructure
         isDeployment: false
       - name: Terraform Apply
+        container: terraform-tools
         dependsOn:
           - Terraform Plan
         deploymentSteps:

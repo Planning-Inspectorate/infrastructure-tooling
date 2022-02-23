@@ -4,6 +4,10 @@ resources:
       type: github
       endpoint: Planning-Inspectorate
       name: Planning-Inspectorate/common-pipeline-templates
+  containers:
+    - container: terraform-tools
+      image: terraform-tools
+      endpoint: Container Registry
 
 pool:
   vmImage: ubuntu-latest
@@ -11,19 +15,13 @@ pool:
 extends:
   template: stages/wrapper_ci.yml@templates
   parameters:
+    container: terraform-tools
     project: infrastructure
     validateName: Validate Terraform
     validationSteps:
-      - script: |
-          brew install tflint
-          brew install checkov
-        displayName: Install dependencies
       - template: steps/terraform_format.yml@templates
       - template: steps/terraform_tflint.yml@templates
       - template: steps/run_checkov.yml@templates
       - template: steps/terraform_validate.yml@templates
         parameters:
           workingDirectory: $(Build.Repository.LocalPath)/infrastructure
-      - template: steps/git_tagging.yml@templates
-        parameters:
-          tagPrefix: infrastructure-tooling
