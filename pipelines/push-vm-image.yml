@@ -5,6 +5,10 @@ pr: none
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  azurecrServiceConnection: Container Registry
+  repository: terraform-tools
+
 stages:
   - stage: Build_Deploy
     displayName: Build and Deploy Azure Images
@@ -16,9 +20,9 @@ stages:
             displayName: Build and push an image to container registry
             inputs:
               command: buildAndPush
-              repository: terraform-tools
+              repository: $(repository)
               dockerfile: pipelines/docker/terraform-tools/Dockerfile
-              containerRegistry: Container Registry
+              containerRegistry: $(azurecrServiceConnection)
               tags: latest
         workspace:
           clean: all
