@@ -2,7 +2,7 @@ parameters:
   - name: setupPeering
     default: true
     displayName: Network Peering Enabled?
-    type: bool
+    type: boolean
 
 trigger: none
 
