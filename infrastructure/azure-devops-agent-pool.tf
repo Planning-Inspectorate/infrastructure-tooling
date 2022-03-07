@@ -4,7 +4,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
   name                = "pins-vmss-${local.resource_suffix}"
   resource_group_name = azurerm_resource_group.tooling.name
   location            = azurerm_resource_group.tooling.location
-  sku                 = "Standard_D2_v3"
+  sku                 = "Standard_D2ds_v5"
   instances           = 2
 
   overprovision          = false
@@ -42,9 +42,9 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
   }
 
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
+    publisher = "canonical"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = "20_04-lts"
     version   = "latest"
   }
 
