@@ -12,11 +12,29 @@ resource "azurerm_subnet" "azure_agents" {
   address_prefixes     = ["10.0.0.0/24"]
 }
 
-resource "azurerm_virtual_network_peering" "environments_peering" {
-  for_each = var.environment_vnets
+resource "azurerm_virtual_network_peering" "dev_environment_peering" {
+  count = can(var.environment_vnets["dev"]) ? 1 : 0
 
-  name                      = "pins-peer-${each.key}-${local.resource_suffix}"
-  remote_virtual_network_id = data.azurerm_virtual_network.environments[each.key].id
+  name                      = "pins-peer-dev-${local.resource_suffix}"
+  remote_virtual_network_id = data.azurerm_virtual_network.dev[count.index].id
+  resource_group_name       = azurerm_resource_group.tooling.name
+  virtual_network_name      = azurerm_virtual_network.tooling.name
+}
+
+resource "azurerm_virtual_network_peering" "test_environment_peering" {
+  count = can(var.environment_vnets["test"]) ? 1 : 0
+
+  name                      = "pins-peer-test-${local.resource_suffix}"
+  remote_virtual_network_id = data.azurerm_virtual_network.test[count.index].id
+  resource_group_name       = azurerm_resource_group.tooling.name
+  virtual_network_name      = azurerm_virtual_network.tooling.name
+}
+
+resource "azurerm_virtual_network_peering" "prod_environment_peering" {
+  count = can(var.environment_vnets["prod"]) ? 1 : 0
+
+  name                      = "pins-peer-prod-${local.resource_suffix}"
+  remote_virtual_network_id = data.azurerm_virtual_network.prod[count.index].id
   resource_group_name       = azurerm_resource_group.tooling.name
   virtual_network_name      = azurerm_virtual_network.tooling.name
 }
