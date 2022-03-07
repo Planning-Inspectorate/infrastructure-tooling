@@ -34,7 +34,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
 
   os_disk {
     caching              = "ReadOnly"
-    storage_account_type = "StandardSSD_LRS"
+    storage_account_type = "Standard_LRS"
 
     diff_disk_settings {
       option = "Local"
