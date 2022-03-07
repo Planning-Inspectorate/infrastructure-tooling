@@ -47,9 +47,6 @@ extends:
           - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_apply.yml@templates
             parameters:
               subscriptionId: $(SUBSCRIPTION_ID)
-              ${{ if eq(parameters.setupPeering, 'true') }}:
-                environmentVariables:
-                  TF_CLI_ARGS: -var-file=../terraform.tfvars
         isDeployment: true
     environments:
       - name: Tooling
