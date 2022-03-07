@@ -36,7 +36,7 @@ extends:
               workingDirectory: $(Build.Repository.LocalPath)/infrastructure
               ${{ if eq(parameters.setupPeering, 'true') }}:
                 environmentVariables:
-                  TF_CLI_ARGS: -var-file=${{variables['Build.Repository.LocalPath']}}/terraform.tfvars
+                  TF_CLI_ARGS: -var-file=../terraform.tfvars
         isDeployment: false
       - name: Terraform Apply
         authType: terraform
@@ -49,7 +49,7 @@ extends:
               subscriptionId: $(SUBSCRIPTION_ID)
               ${{ if eq(parameters.setupPeering, 'true') }}:
                 environmentVariables:
-                  TF_CLI_ARGS: -var-file=${{variables['Build.Repository.LocalPath']}}/terraform.tfvars
+                  TF_CLI_ARGS: -var-file=../terraform.tfvars
         isDeployment: true
     environments:
       - name: Tooling
