@@ -1,3 +1,9 @@
+parameters:
+  - name: setupPeering
+    default: true
+    displayName: Network Peering Enabled?
+    type: bool
+
 trigger: none
 
 pr: none
@@ -28,6 +34,9 @@ extends:
             parameters:
               subscriptionId: $(SUBSCRIPTION_ID)
               workingDirectory: $(Build.Repository.LocalPath)/infrastructure
+              ${{ if eq(parameters.setupPeering, 'true') }}:
+                environmentVariables:
+                  TF_CLI_ARGS: -var-file=${{variables['Build.Repository.LocalPath']}}/terraform.tfvars
         isDeployment: false
       - name: Terraform Apply
         authType: terraform
@@ -38,6 +47,9 @@ extends:
           - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_apply.yml@templates
             parameters:
               subscriptionId: $(SUBSCRIPTION_ID)
+              ${{ if eq(parameters.setupPeering, 'true') }}:
+                environmentVariables:
+                  TF_CLI_ARGS: -var-file=${{variables['Build.Repository.LocalPath']}}/terraform.tfvars
         isDeployment: true
     environments:
       - name: Tooling
