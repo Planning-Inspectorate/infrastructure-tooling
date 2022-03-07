@@ -1,6 +1,7 @@
 resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
   #checkov:skip=CKV_AZURE_49: SSH key authentication not required
   #checkov:skip=CKV_AZURE_97: Encryption at host not required
+  #checkov:skip=CKV_AZURE_149: Password authentication required
   name                = "pins-vmss-${local.resource_suffix}"
   resource_group_name = azurerm_resource_group.tooling.name
   location            = azurerm_resource_group.tooling.location
