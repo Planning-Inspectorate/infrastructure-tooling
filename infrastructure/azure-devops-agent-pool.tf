@@ -10,7 +10,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
   overprovision          = false
   single_placement_group = false
 
-  admin_username                  = "admin"
+  admin_username                  = "adminuser"
   admin_password                  = azurerm_key_vault_secret.agents_admin_password.value
   disable_password_authentication = false
 
