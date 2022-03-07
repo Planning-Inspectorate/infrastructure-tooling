@@ -6,7 +6,7 @@ variable "environment" {
 
 variable "environment_vnets" {
   description = "A map containing the VNet name and resource group for each environment"
-  type        = map(string)
+  type        = map(map(string))
   default     = {}
 }
 
