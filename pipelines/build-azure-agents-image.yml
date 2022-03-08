@@ -28,6 +28,7 @@ stages:
             parameters:
               azureServiceConnection: $(azureServiceConnection)
           - script: packer build .
+            displayName: Packer Build
             env:
               PKR_VAR_client_id: $(azureClientId)
               PKR_VAR_client_secret: $(azureClientSecret)
