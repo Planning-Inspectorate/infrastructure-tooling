@@ -17,6 +17,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
 
   platform_fault_domain_count = 1
 
+  source_image_id = data.azurerm_image.azure_agents.id
+
   boot_diagnostics {
     storage_account_uri = null
   }
@@ -40,13 +42,6 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
     diff_disk_settings {
       option = "Local"
     }
-  }
-
-  source_image_reference {
-    publisher = "canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = "20_04-lts"
-    version   = "latest"
   }
 
   lifecycle {

@@ -1,5 +1,10 @@
 data "azurerm_client_config" "current" {}
 
+data "azurerm_image" "azure_agents" {
+  name                = "azure-agents"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+
 data "azurerm_virtual_network" "dev" {
   count = can(var.environment_vnets["dev"]) ? 1 : 0
 
