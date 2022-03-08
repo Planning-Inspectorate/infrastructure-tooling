@@ -2,10 +2,10 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
+sudo echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
 
-apt-get update
-apt-get install -y --no-install-recommends \
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends \
   curl \
   gnupg \
   jq \
@@ -13,27 +13,27 @@ apt-get install -y --no-install-recommends \
   unzip \
   zip
 
-add-apt-repository ppa:git-core/ppa
-add-apt-repository ppa:deadsnakes/ppa
+sudo add-apt-repository ppa:git-core/ppa
+sudo add-apt-repository ppa:deadsnakes/ppa
 
 # Git
-apt install -y --no-install-recommends \
+sudo apt install -y --no-install-recommends \
   git \
   git-lfs \
   git-ftp \
 
 # Python
-apt install -y --no-install-recommends \
+sudo apt install -y --no-install-recommends \
   python3.7 \
   python3-pip
 
 # Terraform 1.1.6
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-apt-get install -y terraform=1.1.6
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+sudo apt-get install -y terraform=1.1.6
 
 # Terragrunt 0.36.1
-curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.36.1/terragrunt_linux_amd64" -o /usr/bin/terragrunt && chmod 777 /usr/bin/terragrunt
+sudo curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.36.1/terragrunt_linux_amd64" -o /usr/bin/terragrunt && chmod 777 /usr/bin/terragrunt
 
 # Checkov
 python3.7 -m pip install -U checkov

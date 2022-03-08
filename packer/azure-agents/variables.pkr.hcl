@@ -20,5 +20,5 @@ variable "tenant_id" {
 
 variable "tooling_resource_group_name" {
   description = "The name of the Tooling resource group where the image will be created"
-  type = string
+  type        = string
 }
