@@ -27,7 +27,7 @@ stages:
           - template: steps/terraform_azure_cli_auth.yml@templates
             parameters:
               azureServiceConnection: $(azureServiceConnection)
-          - script: packer build -force .
+          - script: packer build .
             displayName: Packer Build
             env:
               PKR_VAR_client_id: $(azureClientId)
