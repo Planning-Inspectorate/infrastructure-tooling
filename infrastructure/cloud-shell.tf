@@ -12,5 +12,7 @@ resource "azurerm_storage_account" "cloud_shell" {
   account_replication_type = "LRS"
   min_tls_version          = "TLS1_2"
 
-  tags = local.tags
+  tags = merge(local.tags, {
+    ms-resource-usage = "azure-cloud-shell"
+  })
 }
