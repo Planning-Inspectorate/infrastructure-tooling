@@ -15,6 +15,6 @@ build {
   }
 
   provisioner "shell" {
-    script = file("${path.cwd}/tools.sh")
+    script = "${path.cwd}/tools.sh"
   }
 }
