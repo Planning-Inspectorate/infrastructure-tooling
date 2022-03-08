@@ -45,6 +45,12 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
   }
 
   lifecycle {
-    ignore_changes = all
+    ignore_changes = [
+      automatic_instance_repair,
+      automatic_os_upgrade_policy,
+      extension,
+      instances,
+      tags
+    ]
   }
 }
