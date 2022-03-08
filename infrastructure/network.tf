@@ -38,3 +38,15 @@ resource "azurerm_virtual_network_peering" "prod_environment_peering" {
   resource_group_name       = azurerm_resource_group.tooling.name
   virtual_network_name      = azurerm_virtual_network.tooling.name
 }
+
+resource "azurerm_private_dns_zone" "private_link" {
+  name                = "privatelink.azurewebsites.net"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "private_link" {
+  name                  = "pins-vnetlink-${local.resource_suffix}"
+  resource_group_name   = azurerm_resource_group.tooling.name
+  private_dns_zone_name = azurerm_private_dns_zone.private_link.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
