@@ -14,13 +14,6 @@ resources:
       type: github
       endpoint: Planning-Inspectorate
       name: Planning-Inspectorate/common-pipeline-templates
-  containers:
-    - container: terraform-tools
-      image: terraform-tools
-      endpoint: Container Registry
-
-pool:
-  vmImage: ubuntu-latest
 
 extends:
   template: stages/wrapper_cd.yml@templates
@@ -28,7 +21,6 @@ extends:
     deploymentStages:
       - name: Terraform Plan
         authType: terraform
-        container: terraform-tools
         deploymentSteps:
           - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_plan.yml@templates
             parameters:
@@ -40,7 +32,6 @@ extends:
         isDeployment: false
       - name: Terraform Apply
         authType: terraform
-        container: terraform-tools
         dependsOn:
           - Terraform Plan
         deploymentSteps:
