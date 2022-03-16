@@ -28,6 +28,23 @@ resource "azurerm_key_vault" "tooling_key_vault" {
     ]
   }
 
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = "6e0b1ad0-76db-4871-b8d8-9d7b539527ff" # "PINS ODT Key Vault Admins"
+
+    key_permissions = [
+      "Create", "Get", "List"
+    ]
+
+    secret_permissions = [
+      "Get", "List", "Set"
+    ]
+
+    storage_permissions = [
+      "Get", "List", "Set"
+    ]
+  }
+
   tags = local.tags
 }
 
