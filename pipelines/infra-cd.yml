@@ -14,7 +14,7 @@ resources:
       type: github
       endpoint: Planning-Inspectorate
       name: Planning-Inspectorate/common-pipeline-templates
-
+      
 extends:
   template: stages/wrapper_cd.yml@templates
   parameters:
@@ -41,4 +41,7 @@ extends:
         isDeployment: true
     environments:
       - name: Tooling
+    pool: 
+      vmImage: ubuntu-latest
     project: infrastructure
+    
