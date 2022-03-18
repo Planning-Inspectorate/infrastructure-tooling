@@ -21,7 +21,6 @@ extends:
     deploymentStages:
       - name: Terraform Plan
         authType: terraform
-        container: terraform-tools
         deploymentSteps:
           - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_plan.yml@templates
             parameters:
@@ -33,7 +32,6 @@ extends:
         isDeployment: false
       - name: Terraform Apply
         authType: terraform
-        container: terraform-tools
         dependsOn:
           - Terraform Plan
         deploymentSteps:
