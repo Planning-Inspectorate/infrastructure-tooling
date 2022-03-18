@@ -14,14 +14,7 @@ resources:
       type: github
       endpoint: Planning-Inspectorate
       name: Planning-Inspectorate/common-pipeline-templates
-  containers:
-    - container: terraform-tools
-      image: terraform-tools
-      endpoint: Container Registry
-
-pool:
-  vmImage: ubuntu-latest
-
+      
 extends:
   template: stages/wrapper_cd.yml@templates
   parameters:
@@ -50,5 +43,7 @@ extends:
         isDeployment: true
     environments:
       - name: Tooling
+    pool: 
+      vmImage: ubuntu-latest
     project: infrastructure
     
