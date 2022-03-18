@@ -17,4 +17,3 @@ extends:
       - template: steps/terraform_validate.yml@templates
         parameters:
           workingDirectory: $(Build.Repository.LocalPath)/infrastructure
-          
