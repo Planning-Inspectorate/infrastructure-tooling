@@ -4,10 +4,18 @@ resources:
       type: github
       endpoint: Planning-Inspectorate
       name: Planning-Inspectorate/common-pipeline-templates
+  containers:
+    - container: terraform-tools
+      image: terraform-tools
+      endpoint: Container Registry
+
+pool:
+  vmImage: ubuntu-latest
 
 extends:
   template: stages/wrapper_ci.yml@templates
   parameters:
+    container: terraform-tools
     projectName: infrastructure
     validateName: Validate Terraform
     validationSteps:
@@ -17,3 +25,4 @@ extends:
       - template: steps/terraform_validate.yml@templates
         parameters:
           workingDirectory: $(Build.Repository.LocalPath)/infrastructure
+          
