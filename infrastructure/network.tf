@@ -45,8 +45,20 @@ resource "azurerm_private_dns_zone" "app_service" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "app_service" {
-  name                  = "pins-vnetlink-${local.resource_suffix}"
-  resource_group_name   = azurerm_resource_group.tooling.name
+  name                  = "pins-vnetlink-app-service-${local.resource_suffix}"
   private_dns_zone_name = azurerm_private_dns_zone.app_service.name
+  resource_group_name   = azurerm_resource_group.tooling.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
+
+resource "azurerm_private_dns_zone" "cosmosdb" {
+  name                = "privatelink.mongo.cosmos.azure.com"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "cosmosdb" {
+  name                  = "pins-vnetlink-cosmosdb-${local.resource_suffix}"
+  private_dns_zone_name = azurerm_private_dns_zone.cosmosdb.name
+  resource_group_name   = azurerm_resource_group.tooling.name
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
