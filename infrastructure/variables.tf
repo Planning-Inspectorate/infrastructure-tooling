@@ -10,6 +10,11 @@ variable "environment_vnets" {
   default     = {}
 }
 
+variable "frontdoor_service_principal" {
+  description = "The object ID for the Front Door Service Principal configured at the tenant level"
+  type        = string
+}
+
 variable "primary_region" {
   description = "The primary region resources are deployed to in slug format e.g. 'uk-south'"
   type        = string
@@ -17,7 +22,7 @@ variable "primary_region" {
 }
 
 variable "secondary_region" {
-  description = "The secondary region resources are deployed to for georeplication in slug format e.g. 'uk-west'"
+  description = "The secondary region resources are deployed to for geo-replication in slug format e.g. 'uk-west'"
   type        = string
   default     = "uk-west"
 }
