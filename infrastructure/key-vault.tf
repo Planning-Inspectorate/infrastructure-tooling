@@ -11,41 +11,38 @@ resource "azurerm_key_vault" "tooling_key_vault" {
 
   sku_name = "standard"
 
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
-
-    key_permissions = [
-      "Create", "Delete", "Get", "List"
-    ]
-
-    secret_permissions = [
-      "Delete", "Get", "List", "Set"
-    ]
-
-    storage_permissions = [
-      "Delete", "Get", "List", "Set"
-    ]
-  }
-
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = "6e0b1ad0-76db-4871-b8d8-9d7b539527ff" # "PINS ODT Key Vault Admins"
-
-    key_permissions = [
-      "Create", "Get", "List"
-    ]
-
-    secret_permissions = [
-      "Get", "List", "Set"
-    ]
-
-    storage_permissions = [
-      "Get", "List", "Set"
-    ]
-  }
-
   tags = local.tags
+}
+
+resource "azurerm_key_vault_access_policy" "terraform" {
+  key_vault_id = azurerm_key_vault.tooling_key_vault.id
+  object_id    = data.azurerm_client_config.current.object_id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+
+  certificate_permissions = ["Create", "Delete", "Get", "Import", "List"]
+  key_permissions         = ["Create", "Delete", "Get", "List"]
+  secret_permissions      = ["Delete", "Get", "List", "Set"]
+  storage_permissions     = ["Delete", "Get", "List", "Set"]
+}
+
+resource "azurerm_key_vault_access_policy" "admins" {
+  key_vault_id = azurerm_key_vault.tooling_key_vault.id
+  object_id    = "6e0b1ad0-76db-4871-b8d8-9d7b539527ff" # "PINS ODT Key Vault Admins"
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+
+  certificate_permissions = ["Create", "Get", "Import", "List"]
+  key_permissions         = ["Create", "Get", "List"]
+  secret_permissions      = ["Get", "List", "Set"]
+  storage_permissions     = ["Get", "List", "Set"]
+}
+
+resource "azurerm_key_vault_access_policy" "frontdoor" {
+  key_vault_id = azurerm_key_vault.tooling_key_vault.id
+  object_id    = var.frontdoor_service_principal
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+
+  certificate_permissions = ["Get"]
+  secret_permissions      = ["Get"]
 }
 
 resource "random_password" "agents_admin_password" {
