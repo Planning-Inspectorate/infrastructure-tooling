@@ -38,7 +38,7 @@ resource "azurerm_key_vault_access_policy" "admins" {
 
 resource "azurerm_key_vault_access_policy" "frontdoor" {
   key_vault_id = azurerm_key_vault.tooling_key_vault.id
-  object_id    = var.frontdoor_service_principal
+  object_id    = "c73a3f61-aa0a-4450-b3f8-303d72bf57a9" # Front Door service principal
   tenant_id    = data.azurerm_client_config.current.tenant_id
 
   certificate_permissions = ["Get"]
