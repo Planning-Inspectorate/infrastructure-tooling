@@ -1,9 +1,3 @@
-parameters:
-  - name: setupPeering
-    default: true
-    displayName: Network Peering Enabled?
-    type: boolean
-
 trigger: none
 
 pr: none
@@ -26,9 +20,6 @@ extends:
             parameters:
               subscriptionId: $(SUBSCRIPTION_ID)
               workingDirectory: $(Build.Repository.LocalPath)/infrastructure
-              ${{ if eq(parameters.setupPeering, 'true') }}:
-                environmentVariables:
-                  TF_CLI_ARGS: -var-file=../terraform.tfvars
         isDeployment: false
       - name: Terraform Apply
         authType: terraform
