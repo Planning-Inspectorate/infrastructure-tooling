@@ -64,6 +64,7 @@ nvm install 15
 nvm install 14
 
 nvm alias default 16
+nvm use default
 
 cat <<EOT >> ~/.bashrc
 #
