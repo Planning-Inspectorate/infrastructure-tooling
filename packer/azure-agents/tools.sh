@@ -60,6 +60,34 @@ curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 nvm install 16
+nvm install 15
+nvm install 14
+
+nvm alias default 16
+
+cat <<EOT >> ~/.bashrc
+#
+# Run 'nvm use' automatically every time there's
+# a .nvmrc file in the directory. Also, revert to default
+# version when entering a directory without .nvmrc
+#
+enter_directory() {
+  if [[ $PWD == $PREV_PWD ]]; then
+    return
+  fi
+
+  PREV_PWD=$PWD
+  if [[ -f ".nvmrc" ]]; then
+    nvm use
+    NVM_DIRTY=true
+  elif [[ $NVM_DIRTY = true ]]; then
+    nvm use default
+    NVM_DIRTY=false
+  fi
+}
+
+export PROMPT_COMMAND=enter_directory
+EOT
 
 # Azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | bash
