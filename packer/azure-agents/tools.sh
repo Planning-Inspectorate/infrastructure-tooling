@@ -55,6 +55,12 @@ python3.7 -m pip install -U checkov
 # TFLint
 curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
+# Node / NVM
+curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm install 16
+
 # Azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
