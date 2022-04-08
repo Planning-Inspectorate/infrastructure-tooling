@@ -3,8 +3,8 @@ trigger: none
 pr: none
 
 schedules:
-  - cron: "0 6 * * 1"
-    displayName: Monday 06:00 Weekly Cleanup
+  - cron: "0 6 * * 1-5"
+    displayName: Weekday 06:00 Cleanup
     branches:
       include:
       - main
@@ -41,6 +41,6 @@ stages:
                 -ResourceGroupName $(tooling_resource_group_name) `
                 -VMScaleSetName $(build_agent_scale_set_name)
               errorActionPreference: stop
-              FailOnStandardError: false
+              FailOnStandardError: true
               TargetAzurePs: latestVersion
             displayName: 'Cleanup Images'
