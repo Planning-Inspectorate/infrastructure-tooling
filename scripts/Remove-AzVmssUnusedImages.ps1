@@ -30,7 +30,7 @@ Try {
   $Images = Get-AzImage -ResourceGroupName $ResourceGroupName
   Write-Host "[$ScriptName] Found $($Images.Count) images in resource group $ResourceGroupName"
 
-  If ($Images.Count -lt 2) {
+  If ($Images.Count -le 1) {
     Write-Host "[$ScriptName] Exiting: Nothing to do!"
     Exit 0
   }
@@ -46,7 +46,7 @@ Foreach ($Image in $Images) {
   $DateString = ($Image.Name).Split('-')[2]
   $ImageDate = [DateTime]::ParseExact($DateString, 'yyyyMMddHHmmss', $null)
 
-  # Remove any images not in-use by the VM Scale Set and >=24 hours old
+  # Remove any images not in-use by the VM Scale Set and >=12 hours old
   If (!($Image.Name -eq $ImageName) -and ($ImageDate -le $StartTime.AddHours(-$ExpireHours))) {
     Try {
       If ($WhatIf) {
