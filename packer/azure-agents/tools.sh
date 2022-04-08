@@ -3,7 +3,7 @@ export DEBIAN_FRONTEND=noninteractive
 sudo echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries
 sudo echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
 
-sudo apt-get clean && apt-get update
+sudo apt-get clean && apt-get update && apt-get upgrade
 sudo apt-get install -y --no-install-recommends \
   ca-certificates \
   curl \
@@ -56,6 +56,10 @@ python3.7 -m pip install -U checkov
 curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
 # Node / NVM
+curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+
+sudo apt-get install nodejs
+
 sudo mkdir /usr/local/nvm && chmod -R 777 /usr/local/nvm
 sudo curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | NVM_DIR=/usr/local/nvm bash
 
@@ -63,32 +67,10 @@ export NVM_DIR="/usr/local/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 export PATH="$PATH:$NVM_DIR"
 
-sudo tee -a /etc/skel/.bashrc > /dev/null <<"EOT"
-
+sudo tee /etc/skel/.bashrc > /dev/null <<"EOT"
 export NVM_DIR="/usr/local/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 export PATH="$PATH:$NVM_DIR"
-
-# Run 'nvm use' automatically every time there's
-# a .nvmrc file in the directory. Also, revert to default
-# version when entering a directory without .nvmrc
-
-enter_directory() {
-  if [[ $PWD == $PREV_PWD ]]; then
-    return
-  fi
-
-  PREV_PWD=$PWD
-  if [[ -f ".nvmrc" ]]; then
-    nvm use
-    NVM_DIRTY=true
-  elif [[ $NVM_DIRTY = true ]]; then
-    nvm use default
-    NVM_DIRTY=false
-  fi
-}
-
-export PROMPT_COMMAND=enter_directory
 EOT
 
 nvm install 16
