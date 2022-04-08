@@ -38,20 +38,3 @@ stages:
             workingDirectory: $(Build.Repository.LocalPath)/packer/azure-agents
         workspace:
           clean: all
-  - stage: Cleanup
-    displayName: Cleanup
-    jobs:
-      - job: Cleanup
-        displayName: Remove Unused Build Agent Images
-        steps:
-          - task: PowerShell@2
-            inputs:
-              targetType: 'filePath'
-              filePath: $(Build.Repository.LocalPath/scripts/Remove-AzVmssUnusedImages.ps1
-              arguments: >
-                -ResourceGroupName $(tooling_resource_group_name)
-                -VMScaleSetName "pins-vmss-shared-tooling-uks"
-                -ExpireDays 1
-                -FailBuildOnError $false
-                -WhatIf
-            displayName: 'Cleanup Images'

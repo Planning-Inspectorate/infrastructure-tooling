@@ -6,11 +6,8 @@ Param(
   [Parameter(Mandatory=$true)]
   [String]$VMScaleSetName,
 
-  [Parameter(Mandatory=$true)]
-  [Int]$ExpireDays,
-
-  [Parameter(Mandatory=$true)]
-  [Bool]$FailBuildOnError,
+  [Parameter(Mandatory=$false)]
+  [Int]$ExpireDays = 1,
 
   [Parameter(Mandatory=$false)]
   [Switch]$WhatIf
@@ -33,7 +30,7 @@ Try {
 
 } Catch {
   Write-Host "##vso[task.LogIssue type=error;]$($_.Exception.Message)"
-  Exit [Int]$FailBuildOnError
+  Exit 1
 }
 
 # Get todays date for image date comparison
@@ -49,12 +46,12 @@ Foreach ($Image in $Images) {
   If ( !($Image.Name -eq $ImageName) -and ($ImageDate -le $Today.AddDays(-$ExpireDays)) ) {
     Try {
       If ($WhatIf) {
-        Write-Host "Removing image: $($Image.Name)"
-        Remove-AzImage -ResourceGroupName $ResourceGroupName -ImageName $Image.Name -Force
+        Write-Host "[WhatIf] Would have removed image: $($Image.Name)"
         $RemovedCount++
 
       } Else {
-        Write-Host "[WhatIf] Would have removed image: $($Image.Name)"
+        Write-Host "Removing image: $($Image.Name)"
+        Remove-AzImage -ResourceGroupName $ResourceGroupName -ImageName $Image.Name -Force
         $RemovedCount++
       }
 
@@ -66,10 +63,10 @@ Foreach ($Image in $Images) {
 }
 
 If ($WhatIf) {
-  Write-Host "Task complete: Removed $RemovedCount images"
+  Write-Host "[WhatIf] Would have removed $RemovedCount images"
 
 } Else {
-  Write-Host "[WhatIf] Would have removed $RemovedCount images"
+  Write-Host "Task complete: Removed $RemovedCount images"
 }
 
 Exit 0
