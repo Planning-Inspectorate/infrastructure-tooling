@@ -32,8 +32,7 @@ stages:
               ScriptPath: $(Build.Repository.LocalPath)/scripts/Remove-AzVmssUnusedImages.ps1
               ScriptArguments: >
                 -ResourceGroupName $(tooling_resource_group_name) `
-                -VMScaleSetName $(build_agent_scale_set_name) `
-                -WhatIf
+                -VMScaleSetName $(build_agent_scale_set_name)
               errorActionPreference: stop
               FailOnStandardError: false
               TargetAzurePs: latestVersion

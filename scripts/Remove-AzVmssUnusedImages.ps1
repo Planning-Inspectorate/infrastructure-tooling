@@ -28,7 +28,7 @@ Try {
 
   # Get all Images in the resource group
   $Images = Get-AzImage -ResourceGroupName $ResourceGroupName
-  Write-Host "[$ScriptName] Found $($Images.Count) images"
+  Write-Host "[$ScriptName] Found $($Images.Count) images in resource group $ResourceGroupName"
 
   If ($Images.Count -lt 2) {
     Write-Host "[$ScriptName] Exiting: Nothing to do!"
@@ -54,12 +54,14 @@ Foreach ($Image in $Images) {
         $RemovedCount++
 
       } Else {
-        Write-Host "Removing image: $($Image.Name)"
-        Remove-AzImage -ResourceGroupName $ResourceGroupName -ImageName $Image.Name -Force
+        Write-Host "[$ScriptName] Removing image: $($Image.Name)"
+        Remove-AzImage -ResourceGroupName $ResourceGroupName -ImageName $Image.Name
+        Write-Host "[$ScriptName] Successfully removed image: $($Image.Name)"
         $RemovedCount++
       }
 
     } Catch {
+      Write-Host "[$ScriptName] Failed to remove image: $($Image.Name)"
       Write-Host "##vso[task.LogIssue type=warning;]$($_.Exception.Message)"
       Continue
     }
