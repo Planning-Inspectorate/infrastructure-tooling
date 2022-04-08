@@ -29,7 +29,7 @@ stages:
             inputs:
               ConnectedServiceNameARM: $(azureServiceConnection)
               ScriptType: 'filePath'
-              ScriptPath: $(Build.Repository.LocalPath/scripts/Remove-AzVmssUnusedImages.ps1
+              ScriptPath: $(Build.Repository.LocalPath)/scripts/Remove-AzVmssUnusedImages.ps1
               ScriptArguments: >
                 -ResourceGroupName $(tooling_resource_group_name) `
                 -VMScaleSetName $(build_agent_scale_set_name) `
