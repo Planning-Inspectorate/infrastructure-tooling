@@ -7,7 +7,7 @@ Param(
   [String]$VMScaleSetName,
 
   [Parameter(Mandatory=$false)]
-  [Int]$ExpireDays = 1,
+  [Int]$ExpireHours = 12,
 
   [Parameter(Mandatory=$false)]
   [Switch]$WhatIf
@@ -40,23 +40,23 @@ Try {
   Exit 1
 }
 
+$RemovedCount = 0
 Foreach ($Image in $Images) {
   # Convert the datestamp in the image name to a DateTime object
   $DateString = ($Image.Name).Split('-')[2]
   $ImageDate = [DateTime]::ParseExact($DateString, 'yyyyMMddHHmmss', $null)
 
   # Remove any images not in-use by the VM Scale Set and >=24 hours old
-  $RemovedCount = 0
-  If ( !($Image.Name -eq $ImageName) -and ($ImageDate -le $StartTime.AddDays(-$ExpireDays)) ) {
+  If (!($Image.Name -eq $ImageName) -and ($ImageDate -le $StartTime.AddHours(-$ExpireHours))) {
     Try {
       If ($WhatIf) {
         Write-Host "[$ScriptName] [WhatIf] Would have removed image: $($Image.Name)"
-        $RemovedCount += 1
+        $RemovedCount++
 
       } Else {
         Write-Host "Removing image: $($Image.Name)"
         Remove-AzImage -ResourceGroupName $ResourceGroupName -ImageName $Image.Name -Force
-        $RemovedCount += 1
+        $RemovedCount++
       }
 
     } Catch {
@@ -65,12 +65,12 @@ Foreach ($Image in $Images) {
     }
 
   } Else {
-    Write-Host "Skipping image: $($Image.Name)"
+    Write-Host "[$ScriptName] Skipping image: $($Image.Name)"
   }
 }
 
 If ($WhatIf) {
-  Write-Host "[WhatIf] Would have removed $RemovedCount images"
+  Write-Host "[$ScriptName] [WhatIf] Would have removed $RemovedCount images"
 
 } Else {
   $RunTime = New-TimeSpan -Start $StartTime -End (Get-Date)
