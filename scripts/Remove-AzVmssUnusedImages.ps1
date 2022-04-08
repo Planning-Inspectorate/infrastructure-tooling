@@ -54,7 +54,7 @@ Foreach ($Image in $Images) {
         $RemovedCount++
 
       } Else {
-        Write-Host "[$ScriptName] Removing image: $($Image.Name)"
+        Write-Host "[$ScriptName] Removing image: $($Image.Name)`n"
         Remove-AzImage -ResourceGroupName $ResourceGroupName -ImageName $Image.Name -Force
         Write-Host "[$ScriptName] Successfully removed image: $($Image.Name)"
         $RemovedCount++
