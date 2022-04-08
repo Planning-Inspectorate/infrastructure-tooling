@@ -1,10 +1,10 @@
-#!/bin/bash -e
-
 export DEBIAN_FRONTEND=noninteractive
 
+sudo echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries
 sudo echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
 
-sudo apt-get update && sudo apt-get install -y --no-install-recommends \
+sudo apt-get clean && apt-get update
+sudo apt-get install -y --no-install-recommends \
   ca-certificates \
   curl \
   gnupg \
@@ -21,7 +21,7 @@ sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt install -y --no-install-recommends \
   git \
   git-lfs \
-  git-ftp \
+  git-ftp
 
 # Python
 sudo apt install -y --no-install-recommends \
@@ -56,22 +56,23 @@ python3.7 -m pip install -U checkov
 curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
 # Node / NVM
-curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
-export NVM_DIR="$HOME/.nvm"
+sudo mkdir /usr/local/nvm && chmod -R 777 /usr/local/nvm
+sudo curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | NVM_DIR=/usr/local/nvm bash
+
+export NVM_DIR="/usr/local/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-nvm install 16
-nvm install 15
-nvm install 14
+export PATH="$PATH:$NVM_DIR"
 
-nvm alias default 16
-nvm use default
+sudo tee -a /etc/skel/.bashrc > /dev/null <<"EOT"
 
-cat <<EOT >> ~/.bashrc
-#
+export NVM_DIR="/usr/local/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+export PATH="$PATH:$NVM_DIR"
+
 # Run 'nvm use' automatically every time there's
 # a .nvmrc file in the directory. Also, revert to default
 # version when entering a directory without .nvmrc
-#
+
 enter_directory() {
   if [[ $PWD == $PREV_PWD ]]; then
     return
@@ -89,6 +90,13 @@ enter_directory() {
 
 export PROMPT_COMMAND=enter_directory
 EOT
+
+nvm install 16
+nvm install 15
+nvm install 14
+
+nvm alias default 16
+nvm use default
 
 # Azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | bash
