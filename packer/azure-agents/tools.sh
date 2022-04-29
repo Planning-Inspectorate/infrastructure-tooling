@@ -9,9 +9,20 @@ sudo apt-get install -y --no-install-recommends \
   curl \
   gnupg \
   jq \
+  libasound2 \
+  libgbm-dev \
+  libgconf-2-4 \
+  libgtk2.0-0 \
+  libgtk-3-0 \
+  libnotify-dev \
+  libnss3 \
+  libxss1 \
+  libxtst6 \
   lsb-release \
   software-properties-common \
   unzip \
+  xauth \
+  xvfb \
   zip
 
 sudo add-apt-repository ppa:git-core/ppa
@@ -82,5 +93,15 @@ nvm use default
 
 # Azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+# .NET Core
+wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+rm packages-microsoft-prod.deb
+
+sudo apt-get update; \
+  sudo apt-get install -y apt-transport-https && \
+  sudo apt-get update && \
+  sudo apt-get install -y aspnetcore-runtime-6.0
 
 /usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync
