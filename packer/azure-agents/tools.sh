@@ -37,6 +37,7 @@ sudo apt install -y --no-install-recommends \
 # Python
 sudo apt install -y --no-install-recommends \
   python3.7 \
+  python3-distutils \
   python3-pip
 
 # Docker Engine
