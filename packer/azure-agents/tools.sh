@@ -3,6 +3,12 @@ export DEBIAN_FRONTEND=noninteractive
 sudo echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries
 sudo echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
 
+sudo add-apt-repository main
+sudo add-apt-repository restricted
+sudo add-apt-repository universe
+sudo add-apt-repository multiverse
+sudo apt update
+
 sudo apt-get clean && apt-get update && apt-get upgrade
 sudo apt-get install -y --no-install-recommends \
   ca-certificates \
@@ -34,6 +40,14 @@ sudo apt install -y --no-install-recommends \
   git-lfs \
   git-ftp
 
+# Python
+sudo apt install -y --no-install-recommends \
+  python3.7 \
+  python3.7-distutils \
+  python3-pip
+
+  python3 -v
+
 # Docker Engine
 sudo apt install -y docker.io
 
@@ -56,7 +70,7 @@ sudo apt-get install -y terraform=1.1.6
 sudo curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.36.1/terragrunt_linux_amd64" -o /usr/bin/terragrunt && chmod 777 /usr/bin/terragrunt
 
 # Checkov
-python -m pip install -U checkov
+python3.7 -m pip install -U checkov
 
 # TFLint
 curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
