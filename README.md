@@ -184,4 +184,6 @@ The CD pipeline deploys the tooling infrastructure to the Tooling subscription (
 
 The build agents are set up using Packer templates. Therer are 2 pipelines that run using Microsoft Hosted agents. One to build the image, and one to clean up any old images.
 
+The Packer templates can be found within the `packer/azure-agents` folder. The `tools.sh` script contains the setup instructions for the image.
+
 Once the image has been created, the regular CD pipeline can be run to update the Azure Scale Set with the new image.
