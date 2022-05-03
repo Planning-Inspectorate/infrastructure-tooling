@@ -46,8 +46,6 @@ sudo apt install -y --no-install-recommends \
   python3.7-distutils \
   python3-pip
 
-  python3 -v
-
 # Docker Engine
 sudo apt install -y docker.io
 
