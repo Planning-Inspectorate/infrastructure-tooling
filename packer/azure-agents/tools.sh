@@ -11,6 +11,7 @@ sudo apt update
 
 sudo apt-get clean && apt-get update && apt-get upgrade
 sudo apt-get install -y --no-install-recommends \
+  build-essential \
   ca-certificates \
   curl \
   gnupg \
