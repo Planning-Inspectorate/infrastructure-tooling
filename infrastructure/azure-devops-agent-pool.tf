@@ -2,7 +2,9 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
   #checkov:skip=CKV_AZURE_49: SSH key authentication not required
   #checkov:skip=CKV_AZURE_97: Encryption at host not required
   #checkov:skip=CKV_AZURE_149: Password authentication required
-  name                = "pins-vmss-${local.resource_suffix}"
+  for_each = local.agent_pools
+
+  name                = each.value["name"]
   resource_group_name = azurerm_resource_group.tooling.name
   location            = azurerm_resource_group.tooling.location
   sku                 = "Standard_D2ds_v5"
@@ -25,7 +27,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
 
   network_interface {
     enable_accelerated_networking = true
-    name                          = "pins-vnet-azure-agents-nic-${local.resource_suffix}"
+    name                          = each.value["nic_name"]
     primary                       = true
 
     ip_configuration {
