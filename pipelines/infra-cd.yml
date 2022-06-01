@@ -15,7 +15,6 @@ extends:
   parameters:
     deploymentStages:
       - name: Terraform Plan
-        container: terraform-tooling
         deploymentSteps:
           - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_plan.yml@templates
             parameters:
