@@ -22,7 +22,6 @@ extends:
               workingDirectory: $(Build.Repository.LocalPath)/infrastructure
         isDeployment: false
       - name: Terraform Apply
-        artifact: terraform-plan
         dependsOn:
           - Terraform Plan
         deploymentSteps:
