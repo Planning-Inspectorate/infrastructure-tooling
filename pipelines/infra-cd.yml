@@ -35,4 +35,3 @@ extends:
       - name: Tooling
     pool:
       vmImage: ubuntu-latest
-    project: infrastructure
