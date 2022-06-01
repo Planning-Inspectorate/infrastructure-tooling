@@ -8,13 +8,14 @@ resources:
       type: github
       endpoint: Planning-Inspectorate
       name: Planning-Inspectorate/common-pipeline-templates
-      ref: refs/tags/release/2.0.1 # refs/tags/release/1.1.0
+      ref: refs/tags/release/2.0.1
 
 extends:
   template: stages/wrapper_cd.yml@templates
   parameters:
     deploymentStages:
       - name: Terraform Plan
+        container: terraform-tooling
         deploymentSteps:
           - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_plan.yml@templates
             parameters:
@@ -22,6 +23,7 @@ extends:
               workingDirectory: $(Build.Repository.LocalPath)/infrastructure
         isDeployment: false
       - name: Terraform Apply
+        artifact: terraform-plan
         dependsOn:
           - Terraform Plan
         deploymentSteps:
