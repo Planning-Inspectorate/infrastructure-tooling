@@ -39,7 +39,7 @@ jobs:
             filters+=( $filter )
           done
 
-          PURGE_CMD="acr purge --ago 0d --untagged ${filters[@]}"
+          PURGE_CMD="acr purge --ago 14d --untagged ${filters[@]}"
           az acr run --cmd "$PURGE_CMD" --registry $(containerRegistryName) /dev/null
         displayName: 'Run Container Registry task: purge'
     variables:
