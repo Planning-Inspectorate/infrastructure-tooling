@@ -1,0 +1,48 @@
+pr: none
+trigger: none
+
+schedules:
+  - cron: "0 6 * * 1-5"
+    displayName: Weekday 06:00 Cleanup
+    branches:
+      include:
+      - main
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      endpoint: Planning-Inspectorate
+      name: Planning-Inspectorate/common-pipeline-templates
+      ref: refs/tags/release/3.1.0
+
+pool: pins-odt-agent-pool
+
+variables:
+  - group: pipeline_secrets
+
+jobs:
+  - job: purge
+    displayName: Cleanup Container Registry Images
+    steps:
+      - template: steps/azure_auth.yml@templates
+        parameters:
+          subscriptionId: $(TOOLING_SUBSCRIPTION_ID)
+      - script: |
+          az acr login --name $(containerRegistryName)
+
+          repositories=$(az acr repository list --name $(containerRegistryName) --output tsv)
+          filters=()
+
+          for repository in $repositories; do
+            filter="--filter \"$repository:^(?!^v\d|main|develop|dev|test|prod)\""
+            filters+=( $filter )
+          done
+
+          PURGE_CMD="acr purge --ago 0d --untagged ${filters[@]}"
+          az acr run --cmd "$PURGE_CMD" --registry $(containerRegistryName) /dev/null
+        displayName: 'Run Container Registry task: purge'
+    variables:
+      containerRegistryName: pinscrsharedtoolinguks
+    workspace:
+      clean: all

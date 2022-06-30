@@ -8,27 +8,30 @@ resources:
       type: github
       endpoint: Planning-Inspectorate
       name: Planning-Inspectorate/common-pipeline-templates
-      ref: refs/tags/release/2.0.1
+      ref: refs/tags/release/3.1.0
 
 extends:
   template: stages/wrapper_cd.yml@templates
   parameters:
     deploymentStages:
       - name: Terraform Plan
-        deploymentSteps:
-          - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_plan.yml@templates
-            parameters:
-              subscriptionId: $(SUBSCRIPTION_ID)
-              workingDirectory: $(Build.Repository.LocalPath)/infrastructure
-        isDeployment: false
+        deploymentJobs:
+          - name: Terraform Plan
+            isDeployment: false
+            steps:
+              - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_plan.yml@templates
+                parameters:
+                  subscriptionId: $(SUBSCRIPTION_ID)
+                  workingDirectory: $(Build.Repository.LocalPath)/infrastructure
       - name: Terraform Apply
         dependsOn:
           - Terraform Plan
-        deploymentSteps:
-          - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_apply.yml@templates
-            parameters:
-              subscriptionId: $(SUBSCRIPTION_ID)
-        isDeployment: true
+        deploymentJobs:
+          - name: Terraform Apply
+            steps:
+              - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_apply.yml@templates
+                parameters:
+                  subscriptionId: $(SUBSCRIPTION_ID)
     environments:
       - name: Tooling
     pool:

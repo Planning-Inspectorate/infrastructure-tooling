@@ -11,31 +11,28 @@ resources:
       type: github
       endpoint: Planning-Inspectorate
       name: Planning-Inspectorate/common-pipeline-templates
-      ref: refs/tags/release/2.0.1
+      ref: refs/tags/release/3.1.0
 
 variables:
-  azureServiceConnection: infrastructure-tooling
-  subscriptionId: edb1ff78-90da-4901-a497-7e79f966f8e2
-  tooling_resource_group_name: pins-rg-shared-tooling-uks
+  - group: pipeline_secrets
 
-stages:
-  - stage: Build
-    displayName: Build
-    jobs:
-      - job: Build
-        displayName: Build and Save Azure Scale Set Image
-        steps:
-          - template: steps/terraform_azure_cli_auth.yml@templates
-            parameters:
-              azureServiceConnection: $(azureServiceConnection)
-          - script: packer build .
-            displayName: Packer Build
-            env:
-              PKR_VAR_client_id: $(azureClientId)
-              PKR_VAR_client_secret: $(azureClientSecret)
-              PKR_VAR_subscription_id: $(subscriptionId)
-              PKR_VAR_tenant_id: $(azureTenantId)
-              PKR_VAR_tooling_resource_group_name: $(tooling_resource_group_name)
-            workingDirectory: $(Build.Repository.LocalPath)/packer/azure-agents
-        workspace:
-          clean: all
+jobs:
+  - job: Build
+    displayName: Build and Save Azure Scale Set Image
+    steps:
+      - template: steps/azure_auth.yml@templates
+        parameters:
+          subscriptionId: $(TOOLING_SUBSCRIPTION_ID)
+      - script: packer build .
+        displayName: Packer Build
+        env:
+          PKR_VAR_client_id: $(AZURE_SERVICE_PRINCIPAL_ID)
+          PKR_VAR_client_secret: $(AZURE_SERVICE_PRINCIPAL_SECRET)
+          PKR_VAR_subscription_id: $(TOOLING_SUBSCRIPTION_ID)
+          PKR_VAR_tenant_id: $(AZURE_TENANT_ID)
+          PKR_VAR_tooling_resource_group_name: $(toolingResourceGroupName)
+        workingDirectory: $(Build.Repository.LocalPath)/packer/azure-agents
+    variables:
+      toolingResourceGroupName: pins-rg-shared-tooling-uks
+    workspace:
+      clean: all

@@ -18,22 +18,19 @@ variables:
   tooling_resource_group_name: pins-rg-shared-tooling-uks
   build_agent_scale_set_name: pins-vmss-shared-tooling-uks
 
-stages:
-  - stage: Cleanup
-    displayName: Cleanup
-    jobs:
-      - job: Cleanup
-        displayName: Delete Unused Build Agent Images
-        steps:
-          - task: AzurePowerShell@5
-            inputs:
-              ConnectedServiceNameARM: $(azureServiceConnection)
-              ScriptType: 'filePath'
-              ScriptPath: $(Build.Repository.LocalPath)/scripts/Remove-AzVmssUnusedImages.ps1
-              ScriptArguments: >
-                -ResourceGroupName $(tooling_resource_group_name) `
-                -VMScaleSetName $(build_agent_scale_set_name)
-              errorActionPreference: stop
-              FailOnStandardError: true
-              TargetAzurePs: latestVersion
-            displayName: 'Cleanup Images'
+jobs:
+  - job: Cleanup
+    displayName: Delete Unused Build Agent Images
+    steps:
+      - task: AzurePowerShell@5
+        inputs:
+          ConnectedServiceNameARM: $(azureServiceConnection)
+          ScriptType: 'filePath'
+          ScriptPath: $(Build.Repository.LocalPath)/scripts/Remove-AzVmssUnusedImages.ps1
+          ScriptArguments: >
+            -ResourceGroupName $(tooling_resource_group_name) `
+            -VMScaleSetName $(build_agent_scale_set_name)
+          errorActionPreference: stop
+          FailOnStandardError: true
+          TargetAzurePs: latestVersion
+        displayName: 'Cleanup Images'
