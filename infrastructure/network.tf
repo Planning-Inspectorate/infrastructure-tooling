@@ -12,6 +12,18 @@ resource "azurerm_subnet" "azure_agents" {
   address_prefixes     = ["10.10.0.0/24"]
 }
 
+resource "azurerm_private_dns_zone" "app_config" {
+  name                = "privatelink.azconfig.io"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "app_config" {
+  name                  = "pins-vnetlink-app-config-${local.resource_suffix}"
+  private_dns_zone_name = azurerm_private_dns_zone.app_config.name
+  resource_group_name   = azurerm_resource_group.tooling.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
+
 resource "azurerm_private_dns_zone" "app_service" {
   name                = "privatelink.azurewebsites.net"
   resource_group_name = azurerm_resource_group.tooling.name
