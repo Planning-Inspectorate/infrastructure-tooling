@@ -92,6 +92,8 @@ export NVM_DIR="/usr/local/nvm"
 export PATH="$PATH:$NVM_DIR"
 EOT
 
+nvm install 20
+nvm install 18
 nvm install 16
 nvm install 15
 nvm install 14
