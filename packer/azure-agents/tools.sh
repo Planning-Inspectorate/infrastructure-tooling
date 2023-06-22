@@ -79,7 +79,7 @@ curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 
 sudo apt-get install nodejs
 
-sudo mkdir /usr/local/nvm && chmod -R 777 /usr/local/nvm
+sudo mkdir -R /usr/local/nvm && chmod -R 777 /usr/local/nvm
 sudo curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | NVM_DIR=/usr/local/nvm bash
 
 export NVM_DIR="/usr/local/nvm"
