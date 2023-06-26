@@ -1,5 +1,6 @@
 export DEBIAN_FRONTEND=noninteractive
 
+sudo echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 sudo echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries
 sudo echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
 
@@ -36,19 +37,19 @@ sudo add-apt-repository ppa:git-core/ppa
 sudo add-apt-repository ppa:deadsnakes/ppa
 
 # Git
-sudo apt install -y --no-install-recommends \
+sudo apt-get install -y --no-install-recommends \
   git \
   git-lfs \
   git-ftp
 
 # Python
-sudo apt install -y --no-install-recommends \
+sudo apt-get install -y --no-install-recommends \
   python3.7 \
   python3.7-distutils \
   python3-pip
 
 # Docker Engine
-sudo apt install -y docker.io
+sudo apt-get install -y docker.io
 
 sudo usermod -aG docker $USER
 newgrp docker
@@ -75,7 +76,7 @@ python3.7 -m pip install -U checkov
 curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
 # Node / NVM
-curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 
 sudo apt-get install nodejs
 
