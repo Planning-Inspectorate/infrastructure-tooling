@@ -8,7 +8,8 @@ sudo add-apt-repository main
 sudo add-apt-repository restricted
 sudo add-apt-repository universe
 sudo add-apt-repository multiverse
-sudo apt update
+sudo add-apt-repository ppa:git-core/ppa
+sudo add-apt-repository ppa:deadsnakes/ppa
 
 sudo apt-get clean && apt-get update && apt-get upgrade
 sudo apt-get install -y --no-install-recommends \
@@ -32,9 +33,6 @@ sudo apt-get install -y --no-install-recommends \
   xauth \
   xvfb \
   zip
-
-sudo add-apt-repository ppa:git-core/ppa
-sudo add-apt-repository ppa:deadsnakes/ppa
 
 # Git
 sudo apt-get install -y --no-install-recommends \
