@@ -68,7 +68,8 @@ sudo apt-get install -y terraform=1.1.6
 sudo curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.36.1/terragrunt_linux_amd64" -o /usr/bin/terragrunt && chmod 777 /usr/bin/terragrunt
 
 # Checkov
-python3.7 -m pip install -U checkov
+python3.7 -m pip install --force-reinstall packaging==21
+python3.7 -m pip install -U checkov==2.2.94
 
 # TFLint
 curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
