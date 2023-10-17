@@ -62,7 +62,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 # Terraform 1.5.7
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get install -y terraform=1.5.7
+sudo apt-get install -y terraform=1.5.7-1
 
 # Terragrunt 0.52.3
 sudo curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.52.3/terragrunt_linux_amd64" -o /usr/bin/terragrunt && chmod 777 /usr/bin/terragrunt
