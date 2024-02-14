@@ -35,7 +35,7 @@ echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bash_profile
 
 Install Terraform using tfenv:
 
-```bash
+```python
 tfenv install 1.1.6
 ```
 
@@ -43,7 +43,7 @@ tfenv install 1.1.6
 
 Install pre-commit (requires Python/Pip):
 
-```bash
+```python
 pip install pre-commit
 ```
 
