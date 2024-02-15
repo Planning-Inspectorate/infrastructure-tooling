@@ -150,7 +150,7 @@ resource "azurerm_storage_account" "my_storage_account" {
 }
 ```
 
-Where in this example, `CKV_AZURE_109` is the check to bypass
+Where in this example, `CKV_AZURE_109` is the check to bypass.
 
 ### Packer
 
