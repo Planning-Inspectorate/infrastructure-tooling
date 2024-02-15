@@ -7,12 +7,19 @@ packer {
   }
 }
 
+source "azure-arm" "azure-agents" {
+  client_id       = var.client_id
+  client_secret   = var.client_secret
+  tenant_id       = var.tenant_id
+  subscription_id = var.subscription_id
+}
+
 build {
   name = "azure-devops-agents"
 
   source "source.azure-arm.azure-agents" {
     managed_image_resource_group_name = var.tooling_resource_group_name
-    managed_image_name                = "azure-agents-${formatdate("YYYYMMDDhhmmss",timestamp())}"
+    managed_image_name                = "azure-agents-${formatdate("YYYYMMDDhhmmss", timestamp())}"
 
     os_type         = "Linux"
     image_publisher = "canonical"
