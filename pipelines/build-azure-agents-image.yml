@@ -25,6 +25,7 @@ jobs:
           subscriptionId: $(TOOLING_SUBSCRIPTION_ID)
       - script: packer init .
         displayName: Packer init
+        workingDirectory: $(Build.Repository.LocalPath)/packer/azure-agents
       - script: packer build .
         displayName: Packer Build
         env:
