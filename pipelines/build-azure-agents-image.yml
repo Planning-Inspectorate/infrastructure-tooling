@@ -17,7 +17,7 @@ variables:
   - group: pipeline_secrets
 
 jobs:
-  - job: Init and Build
+  - job: Build
     displayName: Init and Build and Save Azure Scale Set Image
     steps:
       - template: steps/azure_auth.yml@templates
