@@ -1,3 +1,12 @@
+packer {
+  required_plugins {
+    azure = {
+      source  = "github.com/hashicorp/azure"
+      version = "~> 2"
+    }
+  }
+}
+
 source "azure-arm" "azure-agents" {
   client_id       = var.client_id
   client_secret   = var.client_secret
