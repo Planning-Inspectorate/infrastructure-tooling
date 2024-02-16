@@ -42,7 +42,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
     storage_account_type = "Standard_LRS"
 
     diff_disk_settings {
-      option = "Local"
+      option    = "Local"
+      placement = "ResourceDisk"
     }
   }
 
