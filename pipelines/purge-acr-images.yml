@@ -19,7 +19,7 @@ resources:
 pool: pins-odt-agent-pool
 
 variables:
-  - group: pipeline_secrets
+  - group: tooling_pipelines
 
 jobs:
   - job: purge

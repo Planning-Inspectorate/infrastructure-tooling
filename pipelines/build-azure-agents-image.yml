@@ -14,7 +14,7 @@ resources:
       ref: refs/tags/release/3.1.0
 
 variables:
-  - group: pipeline_secrets
+  - group: tooling_pipelines
 
 jobs:
   - job: Build
