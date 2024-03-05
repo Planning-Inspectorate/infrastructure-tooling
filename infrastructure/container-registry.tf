@@ -7,6 +7,15 @@ resource "azurerm_container_registry" "acr" {
   admin_enabled       = true
   sku                 = "Premium"
 
+  retention_policy {
+    enabled = true
+    days    = 7
+  }
+
+  trust_policy {
+    enabled = true
+  }
+
   georeplications {
     location = module.azure_region_secondary.location
     tags     = merge(local.tags, { Region = var.secondary_region })
