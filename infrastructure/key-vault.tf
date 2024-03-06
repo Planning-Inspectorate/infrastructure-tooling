@@ -14,16 +14,17 @@ resource "azurerm_key_vault" "tooling_key_vault" {
   tags = local.tags
 }
 
-resource "azurerm_key_vault_access_policy" "terraform" {
-  key_vault_id = azurerm_key_vault.tooling_key_vault.id
-  object_id    = data.azurerm_client_config.current.object_id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
+# managed manually in Portal, to avoid a race condition where the pipeline needs to read secrets as well as create this
+# resource "azurerm_key_vault_access_policy" "terraform" {
+#   key_vault_id = azurerm_key_vault.tooling_key_vault.id
+#   object_id    = data.azurerm_client_config.current.object_id
+#   tenant_id    = data.azurerm_client_config.current.tenant_id
 
-  certificate_permissions = ["Create", "Delete", "Get", "Import", "List"]
-  key_permissions         = ["Create", "Delete", "Get", "List"]
-  secret_permissions      = ["Delete", "Get", "List", "Set"]
-  storage_permissions     = ["Delete", "Get", "List", "Set"]
-}
+#   certificate_permissions = ["Create", "Delete", "Get", "Import", "List"]
+#   key_permissions         = ["Create", "Delete", "Get", "List"]
+#   secret_permissions      = ["Delete", "Get", "List", "Set"]
+#   storage_permissions     = ["Delete", "Get", "List", "Set"]
+# }
 
 resource "azurerm_key_vault_access_policy" "admins" {
   key_vault_id = azurerm_key_vault.tooling_key_vault.id
