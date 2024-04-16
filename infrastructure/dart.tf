@@ -13,9 +13,11 @@ resource "azurerm_storage_account" "dart_terraform_storage" {
   tags = local.tags
 }
 
-resource "azurerm_storage_container" "dart_terraform_storage_container" {
+resource "azurerm_storage_container" "dart_terraform_storage_containers" {
+  for_each = toset(["dev", "test", "training", "prod"])
+
   #checkov:skip=CKV2_AZURE_21: logging not required
-  name                  = "dart-terraform-state"
+  name                  = "dart-terraform-state-${each.key}"
   storage_account_name  = azurerm_storage_account.dart_terraform_storage.name
   container_access_type = "private"
 }
