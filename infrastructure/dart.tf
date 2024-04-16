@@ -4,7 +4,7 @@ resource "azurerm_storage_account" "dart_terraform_storage" {
   #checkov:skip=CKV_AZURE_33: logging not required
   #checkov:skip=CKV_AZURE_35: terraform requires access
   name                     = "pinsstterraformdartuks"
-  resource_group_name      = azurerm_resource_group.tooling.name
+  resource_group_name      = local.shared_terraform_resource_group
   location                 = azurerm_resource_group.tooling.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
