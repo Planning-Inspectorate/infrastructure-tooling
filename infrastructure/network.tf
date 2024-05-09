@@ -59,3 +59,36 @@ resource "azurerm_private_dns_zone_virtual_network_link" "back_office_sql_server
   resource_group_name   = azurerm_resource_group.tooling.name
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
+
+resource "azurerm_private_dns_zone" "redis" {
+  name                = "privatelink.redis.cache.windows.net"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+resource "azurerm_private_dns_zone_virtual_network_link" "redis" {
+  name                  = "pins-vnetlink-redis-${local.resource_suffix}"
+  private_dns_zone_name = azurerm_private_dns_zone.redis.name
+  resource_group_name   = azurerm_resource_group.tooling.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
+
+resource "azurerm_private_dns_zone" "service_bus" {
+  name                = "privatelink.servicebus.windows.net"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+resource "azurerm_private_dns_zone_virtual_network_link" "service_bus" {
+  name                  = "pins-vnetlink-service-bus-${local.resource_suffix}"
+  private_dns_zone_name = azurerm_private_dns_zone.service_bus.name
+  resource_group_name   = azurerm_resource_group.tooling.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
+
+resource "azurerm_private_dns_zone" "synapse" {
+  name                = "privatelink.sql.azuresynapse.net"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+resource "azurerm_private_dns_zone_virtual_network_link" "synapse" {
+  name                  = "pins-vnetlink-synapse-${local.resource_suffix}"
+  private_dns_zone_name = azurerm_private_dns_zone.synapse.name
+  resource_group_name   = azurerm_resource_group.tooling.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
