@@ -12,5 +12,13 @@ resource "azurerm_container_registry" "acr" {
     tags     = merge(local.tags, { Region = var.secondary_region })
   }
 
+  lifecycle {
+    ignore_changes = [
+      DOCKER_REGISTRY_SERVER_PASSWORD,
+      DOCKER_REGISTRY_SERVER_URL,
+      DOCKER_REGISTRY_SERVER_USERNAME
+    ]
+  }
+
   tags = local.tags
 }
