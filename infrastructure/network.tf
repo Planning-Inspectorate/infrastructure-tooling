@@ -128,3 +128,15 @@ resource "azurerm_private_dns_zone_virtual_network_link" "synapse" {
   resource_group_name   = azurerm_resource_group.tooling.name
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
+
+resource "azurerm_private_dns_zone" "vaultcore" {
+  name                = "privatelink.vaultcore.azure.net"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "vaultcore" {
+  name                  = "pins-vnetlink-vaultcore-${local.resource_suffix}"
+  private_dns_zone_name = azurerm_private_dns_zone.database.name
+  resource_group_name   = azurerm_resource_group.tooling.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
