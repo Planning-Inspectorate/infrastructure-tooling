@@ -31,7 +31,7 @@ resource "azurerm_private_dns_zone" "azure_synapse" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "azure_synapse" {
   name                  = "pins-vnetlink-az-synapse-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.app_config.name
+  private_dns_zone_name = azurerm_private_dns_zone.azure_synapse.name
   resource_group_name   = azurerm_resource_group.tooling.name
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
@@ -79,7 +79,7 @@ resource "azurerm_private_dns_zone" "dfs_core" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "dfs_core" {
   name                  = "pins-vnetlink-dfs-core-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.database.name
+  private_dns_zone_name = azurerm_private_dns_zone.dfs_core.name
   resource_group_name   = azurerm_resource_group.tooling.name
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
@@ -136,7 +136,7 @@ resource "azurerm_private_dns_zone" "vaultcore" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "vaultcore" {
   name                  = "pins-vnetlink-vaultcore-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.database.name
+  private_dns_zone_name = azurerm_private_dns_zone.vaultcore.name
   resource_group_name   = azurerm_resource_group.tooling.name
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
