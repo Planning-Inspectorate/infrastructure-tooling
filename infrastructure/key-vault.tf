@@ -53,8 +53,7 @@ resource "azurerm_key_vault_secret" "agents_admin_password" {
 
   lifecycle {
     ignore_changes = [
-      value,
-      version
+      value
     ]
   }
 }
