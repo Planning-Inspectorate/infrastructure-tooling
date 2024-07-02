@@ -35,7 +35,7 @@ jobs:
           filters=()
 
           for repository in $repositories; do
-            filter="--filter \"$repository:^(?!^v\d|main|develop|dev|test|prod)\""
+            filter="--filter \"$repository:^(?!^v\d|main|develop|dev|test|prod|training|staging)\""
             filters+=( $filter )
           done
 
