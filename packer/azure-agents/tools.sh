@@ -1,117 +1,125 @@
+#!/bin/bash
+set -euo pipefail
+
 export DEBIAN_FRONTEND=noninteractive
 
-sudo echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-sudo echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries
-sudo echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
-
-sudo add-apt-repository main
-sudo add-apt-repository restricted
-sudo add-apt-repository universe
-sudo add-apt-repository multiverse
-sudo add-apt-repository ppa:git-core/ppa
-sudo add-apt-repository ppa:deadsnakes/ppa
+# Set APT options
+sudo bash -c 'echo "APT::Acquire::Retries \"3\";" > /etc/apt/apt.conf.d/80-retries'
+sudo bash -c 'echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes'
 
 sudo apt-get clean && apt-get update && apt-get upgrade
-sudo apt-get install -y --no-install-recommends \
-  build-essential \
-  ca-certificates \
-  curl \
-  gnupg \
-  jq \
-  libasound2 \
-  libgbm-dev \
-  libgconf-2-4 \
-  libgtk2.0-0 \
-  libgtk-3-0 \
-  libnotify-dev \
-  libnss3 \
-  libxss1 \
-  libxtst6 \
-  lsb-release \
-  software-properties-common \
-  unzip \
-  xauth \
-  xvfb \
-  zip
 
-# Git
-sudo apt-get install -y --no-install-recommends \
-  git \
-  git-lfs \
-  git-ftp
+# Source the config file
+CONFIG_FILE="/tmp/config.sh"
+if [ -f "$CONFIG_FILE" ]; then
+  echo "Sourcing $CONFIG_FILE"
+  source "$CONFIG_FILE"
+else
+  echo "config.sh not found" >&2
+  exit 1
+fi
 
-# Python
-sudo apt-get install -y --no-install-recommends \
-  python3.7 \
-  python3.7-distutils \
-  python3-pip
+# Debugging output for repositories and packages
+echo "APT_REPOSITORIES: ${APT_REPOSITORIES[*]}"
+echo "COMMON_PACKAGES: ${COMMON_PACKAGES[*]}"
+
+# Function to add APT repository
+add_apt_repository() {
+  if sudo add-apt-repository -y "$1"; then
+    echo "Added repository: $1"
+  else
+    echo "Failed to add repository: $1" >&2
+    exit 1
+  fi
+}
+
+# Function to install packages
+install_packages() {
+  if sudo apt-get install -y --no-install-recommends "$@"; then
+    echo "Installed packages: $@"
+  else
+    echo "Failed to install packages: $@" >&2
+    exit 1
+  fi
+}
+
+# Add repositories
+for repo in "${APT_REPOSITORIES[@]}"; do
+  echo "Adding repository: $repo"
+  add_apt_repository "$repo"
+done
+
+# Install common packages
+install_packages "${COMMON_PACKAGES[@]}"
 
 # Docker Engine
 sudo apt-get install -y docker.io
-
-sudo usermod -aG docker $USER
+sudo usermod -aG docker "$USER"
 newgrp docker
 
 sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
 
 # Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-# Terraform 1.7.3
-curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get install -y terraform=1.7.3-1
+# Install tfenv
+git clone https://github.com/tfutils/tfenv.git ~/.tfenv
+sudo ln -s ~/.tfenv/bin/* /usr/local/bin
+tfenv install "$TFENV_VERSION"
+tfenv use "$TFENV_VERSION"
 
-# Terragrunt 0.55.1
-sudo curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.55.1/terragrunt_linux_amd64" -o /usr/bin/terragrunt && chmod 777 /usr/bin/terragrunt
+# Terraform
+for version in "${TERRAFORM_VERSIONS[@]}"; do
+  tfenv install "$version"
+  tfenv use "$DEFAULT_TERRAFORM_VERSION"
+done
 
-# Checkov
-python3.7 -m pip install --force-reinstall packaging==21
-python3.7 -m pip install -U checkov==2.2.94
+# Terragrunt
+sudo curl -sL "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64" -o /usr/bin/terragrunt
+sudo chmod 755 /usr/bin/terragrunt
+
+# Checkov via pip
+sudo -H python3 -m pip install -U checkov=="${CHECKOV_VERSION}"
 
 # TFLint
 curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
 # Node / NVM
-curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+NVM_DIR="/usr/local/nvm"
+sudo mkdir -p "$NVM_DIR" && sudo chmod -R 777 "$NVM_DIR"
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | NVM_DIR="$NVM_DIR" bash
 
-sudo apt-get install nodejs
-
-sudo mkdir /usr/local/nvm && chmod -R 777 /usr/local/nvm
-sudo curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | NVM_DIR=/usr/local/nvm bash
-
-export NVM_DIR="/usr/local/nvm"
+export NVM_DIR="$NVM_DIR"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 export PATH="$PATH:$NVM_DIR"
 
 sudo tee /etc/skel/.bashrc > /dev/null <<"EOT"
 export NVM_DIR="/usr/local/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 export PATH="$PATH:$NVM_DIR"
 EOT
 
-nvm install 20
-nvm install 18
-nvm install 16
-nvm install 15
-nvm install 14
+for version in "${NODE_VERSIONS[@]}"; do
+  nvm install "$version"
+done
 
-nvm alias default 16
+nvm alias default "$DEFAULT_NODE_VERSION"
 nvm use default
 
 # Azure CLI
-curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
 # .NET Core
 wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
 sudo dpkg -i packages-microsoft-prod.deb
 rm packages-microsoft-prod.deb
+sudo apt-get update
+sudo apt-get install -y apt-transport-https
+sudo apt-get update
+sudo apt-get install -y aspnetcore-runtime-6.0
 
-sudo apt-get update; \
-  sudo apt-get install -y apt-transport-https && \
-  sudo apt-get update && \
-  sudo apt-get install -y aspnetcore-runtime-6.0
-
-/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync
+# Clean up
+echo "Cleaning up..."
+sudo /usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync
