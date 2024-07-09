@@ -59,10 +59,18 @@ sudo systemctl enable containerd.service
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-# Terraform 1.7.3
-curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get install -y terraform=1.7.3-1
+# Install tfenv
+echo "Installing tfenv..."
+git clone https://github.com/tfutils/tfenv.git ~/.tfenv
+sudo ln -s ~/.tfenv/bin/* /usr/local/bin
+
+# Terraform
+TERRAFORM_VERSIONS=("1.7.3" "1.9.0")
+echo "Installing Terraform versions..."
+for version in "${TERRAFORM_VERSIONS[@]}"; do
+  tfenv install "$version"
+  tfenv use "$version"
+done
 
 # Terragrunt 0.55.1
 sudo curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.55.1/terragrunt_linux_amd64" -o /usr/bin/terragrunt && chmod 777 /usr/bin/terragrunt
