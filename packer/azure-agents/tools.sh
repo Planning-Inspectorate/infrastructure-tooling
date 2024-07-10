@@ -71,8 +71,8 @@ sudo ln -s ~/.tfenv/bin/* /usr/local/bin
 # Terraform
 for version in "${TERRAFORM_VERSIONS[@]}"; do
   tfenv install "$version"
-  tfenv use "$DEFAULT_TERRAFORM_VERSION"
 done
+tfenv use "$DEFAULT_TERRAFORM_VERSION"
 
 # Terragrunt
 sudo curl -sL "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64" -o /usr/bin/terragrunt
