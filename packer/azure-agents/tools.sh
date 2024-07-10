@@ -65,10 +65,8 @@ sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPO
 sudo chmod +x /usr/local/bin/docker-compose
 
 # Install tfenv
-git clone https://github.com/tfutils/tfenv.git ~/.tfenv
+git clone --depth 1 --branch $TFENV_VERSION https://github.com/tfutils/tfenv.git ~/.tfenv
 sudo ln -s ~/.tfenv/bin/* /usr/local/bin
-tfenv install "$TFENV_VERSION"
-tfenv use "$TFENV_VERSION"
 
 # Terraform
 for version in "${TERRAFORM_VERSIONS[@]}"; do
