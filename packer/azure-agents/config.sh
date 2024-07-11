@@ -4,6 +4,8 @@ APT_REPOSITORIES=(
   "restricted"
   "universe"
   "multiverse"
+  "sudo add-apt-repository ppa:git-core/ppa"
+  "sudo add-apt-repository ppa:deadsnakes/ppa"
 )
 
 COMMON_PACKAGES=(
