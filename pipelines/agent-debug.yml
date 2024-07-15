@@ -1,0 +1,29 @@
+trigger: none
+pr: none
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      endpoint: Planning-Inspectorate
+      name: Planning-Inspectorate/common-pipeline-templates
+      ref: refs/tags/release/3.1.0
+
+extends:
+  template: stages/wrapper_ci.yml@templates
+  parameters:
+    validateName: Validate Terraform
+    validationSteps:
+      - script: |
+          echo "Running..."
+          echo "Path:"
+          echo $PATH
+          echo "NVM:"
+          which nvm
+          echo "Node:"
+          which node
+          echo "npm:"
+          which npm
+          echo "ls /usr/local/tfenv/bin"
+          ls /usr/local/tfenv/bin -l
+        displayName: Run debug
