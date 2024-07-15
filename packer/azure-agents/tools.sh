@@ -65,8 +65,14 @@ sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPO
 sudo chmod +x /usr/local/bin/docker-compose
 
 # Install tfenv
-git clone --depth 1 --branch $TFENV_VERSION https://github.com/tfutils/tfenv.git ~/.tfenv
-sudo ln -s ~/.tfenv/bin/* /usr/local/bin
+TFENV_DIR="/usr/local/tfenv"
+sudo mkdir -p "$TFENV_DIR" && sudo chmod -R 777 "$TFENV_DIR"
+git clone --depth 1 --branch $TFENV_VERSION https://github.com/tfutils/tfenv.git $TFENV_DIR
+
+export PATH="$PATH:$TFENV_DIR/bin"
+sudo tee /etc/skel/.bashrc > /dev/null <<"EOT"
+export PATH="$PATH:/usr/local/tfenv/bin"
+EOT
 
 # Terraform
 for version in "${TERRAFORM_VERSIONS[@]}"; do
