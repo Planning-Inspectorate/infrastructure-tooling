@@ -12,6 +12,7 @@ COMMON_PACKAGES=(
   "build-essential"
   "jq"
   "unzip"
+  "zip"
   "xvfb"
   "python3-pip"
 )
