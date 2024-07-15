@@ -69,10 +69,8 @@ TFENV_DIR="/usr/local/tfenv"
 sudo mkdir -p "$TFENV_DIR" && sudo chmod -R 777 "$TFENV_DIR"
 git clone --depth 1 --branch $TFENV_VERSION https://github.com/tfutils/tfenv.git $TFENV_DIR
 
+## add to profile path along with nvm
 export PATH="$PATH:$TFENV_DIR/bin"
-sudo tee /etc/skel/.bashrc > /dev/null <<"EOT"
-export PATH="$PATH:/usr/local/tfenv/bin"
-EOT
 
 # Terraform
 for version in "${TERRAFORM_VERSIONS[@]}"; do
@@ -99,7 +97,9 @@ export NVM_DIR="$NVM_DIR"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 export PATH="$PATH:$NVM_DIR"
 
+## add nvm and tfenv to path
 sudo tee /etc/skel/.bashrc > /dev/null <<"EOT"
+export PATH="$PATH:/usr/local/tfenv/bin"
 export NVM_DIR="/usr/local/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 export PATH="$PATH:$NVM_DIR"
