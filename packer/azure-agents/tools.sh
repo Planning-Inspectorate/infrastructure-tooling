@@ -68,6 +68,8 @@ sudo chmod +x /usr/local/bin/docker-compose
 TFENV_DIR="/usr/local/tfenv"
 sudo mkdir -p "$TFENV_DIR" && sudo chmod -R 777 "$TFENV_DIR"
 git clone --depth 1 --branch $TFENV_VERSION https://github.com/tfutils/tfenv.git $TFENV_DIR
+# make tfenv bin available in this shell
+export PATH="$PATH:$TFENV_DIR/bin"
 ## make tfenv bin available from /usr/local/bin for agents
 sudo ln -s $TFENV_DIR/* /usr/local/bin
 
