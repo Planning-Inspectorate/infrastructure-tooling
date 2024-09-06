@@ -3,12 +3,13 @@ resource "azurerm_role_definition" "custom_storage_blob_data_read_write_delete" 
   scope = data.azurerm_subscription.current.id
 
   permissions {
-    actions = [
+    actions     = []
+    not_actions = []
+    data_actions = [
       "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/delete",
       "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read",
       "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/write",
       "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/add/action"
     ]
-    not_actions = []
   }
 }
