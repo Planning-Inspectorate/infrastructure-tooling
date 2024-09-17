@@ -2,7 +2,7 @@ resource "azurerm_virtual_network" "tooling" {
   name                = "pins-vnet-${local.resource_suffix}"
   resource_group_name = azurerm_resource_group.tooling.name
   location            = azurerm_resource_group.tooling.location
-  address_space       = ["10.10.0.0/24"]
+  address_space       = ["10.10.0.0/16"]
 }
 
 resource "azurerm_subnet" "azure_agents" {
