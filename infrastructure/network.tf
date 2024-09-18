@@ -14,8 +14,8 @@ resource "azurerm_subnet" "azure_agents" {
   address_prefixes     = ["10.10.0.0/24"] # 256 IPs
 }
 
-resource "azurerm_subnet" "vpn_gateway" {
-  name                 = "pins-snet-vpn-gateway-${local.resource_suffix}"
+resource "azurerm_subnet" "GatewaySubnet" {
+  name                 = "GatewaySubnet"
   resource_group_name  = azurerm_resource_group.tooling.name
   virtual_network_name = azurerm_virtual_network.tooling.name
   address_prefixes     = ["10.10.1.0/24"] # 256 IPs
@@ -26,6 +26,14 @@ resource "azurerm_subnet" "vpn_resolver" {
   resource_group_name  = azurerm_resource_group.tooling.name
   virtual_network_name = azurerm_virtual_network.tooling.name
   address_prefixes     = ["10.10.2.0/24"] # 256 IPs
+
+  delegation {
+    name = "Microsoft.Network.dnsResolvers"
+    service_delegation {
+      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+      name    = "Microsoft.Network/dnsResolvers"
+    }
+  }
 }
 
 resource "azurerm_subnet" "vpn_dns_resolver" {

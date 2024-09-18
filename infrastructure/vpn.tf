@@ -2,8 +2,10 @@ resource "azurerm_public_ip" "vpn" {
   name                = "pins-vpn-public-ip-${local.resource_suffix}"
   location            = azurerm_resource_group.tooling.location
   resource_group_name = azurerm_resource_group.tooling.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  zones               = [1, 2, 3]
 
-  allocation_method = "Static"
 
   tags = local.tags
 }
@@ -23,12 +25,12 @@ resource "azurerm_virtual_network_gateway" "main" {
   ip_configuration {
     name                          = "VNetToolingGWpip1"
     public_ip_address_id          = azurerm_public_ip.vpn.id
-    private_ip_address_allocation = "Static"
-    subnet_id                     = azurerm_subnet.vpn_gateway.id
+    private_ip_address_allocation = "Dynamic"
+    subnet_id                     = azurerm_subnet.GatewaySubnet.id
   }
 
   vpn_client_configuration {
-    address_space = ["10.10.4.0/24"] # 256 IPs
+    address_space = ["10.19.0.0/24"] # 256 IPs
   }
 
   tags = local.tags
@@ -47,7 +49,7 @@ resource "azurerm_private_dns_resolver_inbound_endpoint" "vpn" {
   private_dns_resolver_id = azurerm_private_dns_resolver.vpn.id
   location                = azurerm_resource_group.tooling.location
   ip_configurations {
-    private_ip_allocation_method = "Static"
+    private_ip_allocation_method = "Dynamic"
     subnet_id                    = azurerm_subnet.vpn_resolver.id
   }
 
