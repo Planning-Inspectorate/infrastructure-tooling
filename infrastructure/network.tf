@@ -2,16 +2,46 @@ resource "azurerm_virtual_network" "tooling" {
   name                = "pins-vnet-${local.resource_suffix}"
   resource_group_name = azurerm_resource_group.tooling.name
   location            = azurerm_resource_group.tooling.location
-  address_space       = ["10.10.0.0/16"]
+  address_space       = ["10.10.0.0/16"] # 65536 IPs
+
+  tags = local.tags
 }
 
 resource "azurerm_subnet" "azure_agents" {
   name                 = "pins-snet-azure-agents-${local.resource_suffix}"
   resource_group_name  = azurerm_resource_group.tooling.name
   virtual_network_name = azurerm_virtual_network.tooling.name
-  address_prefixes     = ["10.10.0.0/24"]
+  address_prefixes     = ["10.10.0.0/24"] # 256 IPs
 }
 
+resource "azurerm_subnet" "vpn_gateway" {
+  name                 = "pins-snet-vpn-gateway-${local.resource_suffix}"
+  resource_group_name  = azurerm_resource_group.tooling.name
+  virtual_network_name = azurerm_virtual_network.tooling.name
+  address_prefixes     = ["10.10.1.0/24"] # 256 IPs
+}
+
+resource "azurerm_subnet" "vpn_resolver" {
+  name                 = "pins-snet-vpn-resolver-${local.resource_suffix}"
+  resource_group_name  = azurerm_resource_group.tooling.name
+  virtual_network_name = azurerm_virtual_network.tooling.name
+  address_prefixes     = ["10.10.2.0/24"] # 256 IPs
+}
+
+resource "azurerm_subnet" "vpn_dns_resolver" {
+  name                 = "pins-snet-vpn-inbounddns-${local.resource_suffix}"
+  resource_group_name  = azurerm_resource_group.tooling.name
+  virtual_network_name = azurerm_virtual_network.tooling.name
+  address_prefixes     = ["10.10.3.0/24"] # 256 IPs
+
+  delegation {
+    name = "Microsoft.Network.dnsResolvers"
+    service_delegation {
+      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+      name    = "Microsoft.Network/dnsResolvers"
+    }
+  }
+}
 resource "azurerm_private_dns_zone" "app_config" {
   name                = "privatelink.azconfig.io"
   resource_group_name = azurerm_resource_group.tooling.name
