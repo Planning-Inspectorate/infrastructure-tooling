@@ -30,7 +30,12 @@ resource "azurerm_virtual_network_gateway" "main" {
   }
 
   vpn_client_configuration {
-    address_space = ["10.19.0.0/24"] # 256 IPs
+    address_space        = ["10.19.0.0/24"] # 256 IPs
+    aad_tenant           = "https://login.microsoftonline.com/5878df98-6f88-48ab-9322-998ce557088d/"
+    aad_audience         = "c632b3df-fb67-4d84-bdcf-b95ad541b5c8"
+    aad_issuer           = "https://sts.windows.net/5878df98-6f88-48ab-9322-998ce557088d/"
+    vpn_auth_types       = ["AAD"]
+    vpn_client_protocols = ["OpenVPN"]
   }
 
   tags = local.tags
