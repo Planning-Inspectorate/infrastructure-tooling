@@ -9,17 +9,6 @@ sudo bash -c 'echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assu
 
 sudo apt-get clean && apt-get update && apt-get upgrade
 
-# Source the config file
-CONFIG_FILE="/tmp/config.sh"
-if [ -f "$CONFIG_FILE" ]; then
-  echo "Sourcing $CONFIG_FILE"
-  source "$CONFIG_FILE"
-else
-  echo "config.sh not found" >&2
-  exit 1
-fi
-
-# Debugging output for repositories and packages
 echo "APT_REPOSITORIES: ${APT_REPOSITORIES[*]}"
 echo "COMMON_PACKAGES: ${COMMON_PACKAGES[*]}"
 
@@ -67,16 +56,18 @@ sudo chmod +x /usr/local/bin/docker-compose
 # Install tfenv
 TFENV_DIR="/usr/local/tfenv"
 sudo mkdir -p "$TFENV_DIR" && sudo chmod -R 777 "$TFENV_DIR"
+# sudo chown "$USER:$USER" "$TFENV_DIR"
+# sudo git clone https://github.com/tfutils/tfenv.git "TFENV_DIR"
 git clone --depth 1 --branch $TFENV_VERSION https://github.com/tfutils/tfenv.git $TFENV_DIR
-
-## add to profile path along with nvm
 export PATH="$PATH:$TFENV_DIR/bin"
+sudo ln -s $TFENV_DIR/* /usr/local/bin # sudo ln -s "$TFENV_DIR/bin/*" /usr/local/bin
 
 # Terraform
 for version in "${TERRAFORM_VERSIONS[@]}"; do
   tfenv install "$version"
 done
 tfenv use "$DEFAULT_TERRAFORM_VERSION"
+export DEFAULT_TERRAFORM_VERSION="$DEFAULT_TERRAFORM_VERSION"
 
 # Terragrunt
 sudo curl -sL "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64" -o /usr/bin/terragrunt
@@ -99,7 +90,6 @@ export PATH="$PATH:$NVM_DIR"
 
 ## add nvm and tfenv to path
 sudo tee /etc/skel/.bashrc > /dev/null <<"EOT"
-export PATH="$PATH:/usr/local/tfenv/bin"
 export NVM_DIR="/usr/local/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 export PATH="$PATH:$NVM_DIR"
