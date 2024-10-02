@@ -8,6 +8,12 @@ packer {
 }
 
 source "azure-arm" "azure-agents" {
+  azure_tags = {
+    Project          = "tooling"
+    CreatedBy        = "Packer"
+    TerraformVersion = "1.9.6"
+  }
+
   client_id       = var.client_id
   client_secret   = var.client_secret
   tenant_id       = var.tenant_id
@@ -28,11 +34,6 @@ build {
 
     location = "UK South"
     vm_size  = "Standard_DS2_v2"
-  }
-
-  provisioner "file" {
-    source      = "config.sh"
-    destination = "/tmp/config.sh"
   }
 
   provisioner "shell" {
