@@ -10,7 +10,7 @@ packer {
 source "azure-arm" "azure-agents" {
   azure_tags = {
     Project          = "tooling"
-    CreatedBy        = "Packer"
+    CreatedBy        = "packer"
     TerraformVersion = "1.9.6"
   }
 
