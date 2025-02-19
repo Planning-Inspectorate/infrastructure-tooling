@@ -59,10 +59,10 @@ sudo systemctl enable containerd.service
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-# Terraform 1.9.6
+# Terraform 1.10.5
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get install -y terraform=1.9.6-1 # the hyphen is needed for the repo
+sudo apt-get install -y terraform=1.10.5-1 # the hyphen is needed for the repo
 
 # Terragrunt 0.55.1
 sudo curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.55.1/terragrunt_linux_amd64" -o /usr/bin/terragrunt && chmod 777 /usr/bin/terragrunt
@@ -74,11 +74,7 @@ python3.7 -m pip install -U checkov==2.2.94
 # TFLint
 curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
-# Node / NVM
-curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-
-sudo apt-get install nodejs
-
+# NVM
 sudo mkdir /usr/local/nvm && chmod -R 777 /usr/local/nvm
 sudo curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | NVM_DIR=/usr/local/nvm bash
 
@@ -92,6 +88,7 @@ export NVM_DIR="/usr/local/nvm"
 export PATH="$PATH:$NVM_DIR"
 EOT
 
+# Node versions
 nvm install 22
 nvm install 20
 nvm install 18
