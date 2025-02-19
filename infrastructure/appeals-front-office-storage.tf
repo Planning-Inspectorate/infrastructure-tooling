@@ -4,7 +4,7 @@ resource "azurerm_storage_account" "appeals_front_office_terraform_storage" {
   #checkov:skip=CKV2_AZURE_18: Customer Managed Keys not implemented
   #checkov:skip=CKV_AZURE_33: logging not required
   #checkov:skip=CKV_AZURE_35: terraform requires access
-  name                             = "pinssttfstateuksappealwfe"
+  name                             = "pinssttfstateuksappealfo"
   resource_group_name              = local.shared_terraform_resource_group
   location                         = azurerm_resource_group.tooling.location
   account_tier                     = "Standard"
