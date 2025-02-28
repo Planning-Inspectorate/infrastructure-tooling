@@ -78,6 +78,18 @@ resource "azurerm_private_dns_zone_virtual_network_link" "azure_synapse" {
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
 
+resource "azurerm_private_dns_zone" "azure_synapse_dev" {
+  name                = "privatelink.dev.azuresynapse.net"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "azure_synapse_dev" {
+  name                  = "pins-vnetlink-az-synapse-dev-${local.resource_suffix}"
+  private_dns_zone_name = azurerm_private_dns_zone.azure_synapse_dev.name
+  resource_group_name   = azurerm_resource_group.tooling.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
+
 resource "azurerm_private_dns_zone" "app_service" {
   name                = "privatelink.azurewebsites.net"
   resource_group_name = azurerm_resource_group.tooling.name
