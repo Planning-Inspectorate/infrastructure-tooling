@@ -126,18 +126,6 @@ resource "azurerm_private_dns_zone_virtual_network_link" "back_office_sql_server
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
 
-resource "azurerm_private_dns_zone" "dfs_core" {
-  name                = "privatelink.dfs.core.windows.net"
-  resource_group_name = azurerm_resource_group.tooling.name
-}
-
-resource "azurerm_private_dns_zone_virtual_network_link" "dfs_core" {
-  name                  = "pins-vnetlink-dfs-core-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.dfs_core.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
-}
-
 resource "azurerm_private_dns_zone" "internal" {
   name                = "pins.internal"
   resource_group_name = azurerm_resource_group.tooling.name
@@ -168,6 +156,25 @@ resource "azurerm_private_dns_zone" "service_bus" {
 resource "azurerm_private_dns_zone_virtual_network_link" "service_bus" {
   name                  = "pins-vnetlink-service-bus-${local.resource_suffix}"
   private_dns_zone_name = azurerm_private_dns_zone.service_bus.name
+  resource_group_name   = azurerm_resource_group.tooling.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
+
+locals {
+  storage_zones = ["blob", "dfs", "file", "queue", "table", "web"]
+}
+
+resource "azurerm_private_dns_zone" "storage" {
+  for_each            = toset(local.storage_zones)
+  name                = "privatelink.${each.key}.core.windows.net"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "storage" {
+  for_each = toset(local.storage_zones)
+
+  name                  = "pins-vnetlink-${each.key}-${local.resource_suffix}"
+  private_dns_zone_name = azurerm_private_dns_zone.storage[each.key].name
   resource_group_name   = azurerm_resource_group.tooling.name
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
