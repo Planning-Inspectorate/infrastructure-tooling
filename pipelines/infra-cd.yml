@@ -17,10 +17,6 @@ extends:
     deploymentStages:
       - name: Terraform Plan
         deploymentJobs:
-          - task: TerraformInstaller@1
-            displayName: Install Terraform
-            inputs:
-                terraformVersion: "latest"
           - name: Terraform Plan
             isDeployment: false
             timeoutInMinutes: 30
