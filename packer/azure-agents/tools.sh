@@ -60,7 +60,7 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-
 sudo chmod +x /usr/local/bin/docker-compose
 
 # Powershell
-sudo apt-get install -y powershell
+sudo snap install powershell --classic
 
 # Terraform 1.11.4
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
