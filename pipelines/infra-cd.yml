@@ -37,4 +37,4 @@ extends:
     environments:
       - name: Tooling
     pool:
-      vmImage: ubuntu-latest
+      vmImage: ubuntu-22.04    #ubuntu-latest by default does not have Terraform installed

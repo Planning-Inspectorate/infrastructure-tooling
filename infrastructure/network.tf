@@ -78,6 +78,18 @@ resource "azurerm_private_dns_zone_virtual_network_link" "azure_synapse" {
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
 
+resource "azurerm_private_dns_zone" "azure_synapse_dev" {
+  name                = "privatelink.dev.azuresynapse.net"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "azure_synapse_dev" {
+  name                  = "pins-vnetlink-az-synapse-dev-${local.resource_suffix}"
+  private_dns_zone_name = azurerm_private_dns_zone.azure_synapse_dev.name
+  resource_group_name   = azurerm_resource_group.tooling.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
+
 resource "azurerm_private_dns_zone" "app_service" {
   name                = "privatelink.azurewebsites.net"
   resource_group_name = azurerm_resource_group.tooling.name
@@ -110,18 +122,6 @@ resource "azurerm_private_dns_zone" "database" {
 resource "azurerm_private_dns_zone_virtual_network_link" "back_office_sql_server" {
   name                  = "pins-vnetlink-sql-server-${local.resource_suffix}"
   private_dns_zone_name = azurerm_private_dns_zone.database.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
-}
-
-resource "azurerm_private_dns_zone" "dfs_core" {
-  name                = "privatelink.dfs.core.windows.net"
-  resource_group_name = azurerm_resource_group.tooling.name
-}
-
-resource "azurerm_private_dns_zone_virtual_network_link" "dfs_core" {
-  name                  = "pins-vnetlink-dfs-core-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.dfs_core.name
   resource_group_name   = azurerm_resource_group.tooling.name
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
@@ -160,6 +160,25 @@ resource "azurerm_private_dns_zone_virtual_network_link" "service_bus" {
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
 
+locals {
+  storage_zones = ["blob", "dfs", "file", "queue", "table", "web"]
+}
+
+resource "azurerm_private_dns_zone" "storage" {
+  for_each            = toset(local.storage_zones)
+  name                = "privatelink.${each.key}.core.windows.net"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "storage" {
+  for_each = toset(local.storage_zones)
+
+  name                  = "pins-vnetlink-${each.key}-${local.resource_suffix}"
+  private_dns_zone_name = azurerm_private_dns_zone.storage[each.key].name
+  resource_group_name   = azurerm_resource_group.tooling.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
+
 resource "azurerm_private_dns_zone" "synapse" {
   name                = "privatelink.sql.azuresynapse.net"
   resource_group_name = azurerm_resource_group.tooling.name
@@ -181,4 +200,51 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vaultcore" {
   private_dns_zone_name = azurerm_private_dns_zone.vaultcore.name
   resource_group_name   = azurerm_resource_group.tooling.name
   virtual_network_id    = azurerm_virtual_network.tooling.id
+}
+
+locals {
+  virtual_network_links = merge(
+    {
+      "app_config"             = azurerm_private_dns_zone_virtual_network_link.app_config,
+      "azure_synapse"          = azurerm_private_dns_zone_virtual_network_link.azure_synapse,
+      "azure_synapse_dev"      = azurerm_private_dns_zone_virtual_network_link.azure_synapse_dev,
+      "app_service"            = azurerm_private_dns_zone_virtual_network_link.app_service,
+      "cosmosdb"               = azurerm_private_dns_zone_virtual_network_link.cosmosdb,
+      "back_office_sql_server" = azurerm_private_dns_zone_virtual_network_link.back_office_sql_server,
+      "redis"                  = azurerm_private_dns_zone_virtual_network_link.redis,
+      "service_bus"            = azurerm_private_dns_zone_virtual_network_link.service_bus,
+      "synapse"                = azurerm_private_dns_zone_virtual_network_link.synapse,
+      "vaultcore"              = azurerm_private_dns_zone_virtual_network_link.vaultcore
+    },
+    {
+      for k, v in azurerm_private_dns_zone_virtual_network_link.storage : k => v
+    }
+  )
+}
+
+# always fallback to internet - not available via azurerm currently
+# https://github.com/hashicorp/terraform-provider-azurerm/issues/29196
+resource "azapi_update_resource" "main" {
+  for_each = local.virtual_network_links
+
+  type        = "Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01"
+  resource_id = each.value.id
+  body = {
+    properties = {
+      resolutionPolicy = "NxDomainRedirect",
+    }
+  }
+  depends_on = [
+    azurerm_private_dns_zone_virtual_network_link.app_config,
+    azurerm_private_dns_zone_virtual_network_link.azure_synapse,
+    azurerm_private_dns_zone_virtual_network_link.azure_synapse_dev,
+    azurerm_private_dns_zone_virtual_network_link.app_service,
+    azurerm_private_dns_zone_virtual_network_link.cosmosdb,
+    azurerm_private_dns_zone_virtual_network_link.back_office_sql_server,
+    azurerm_private_dns_zone_virtual_network_link.redis,
+    azurerm_private_dns_zone_virtual_network_link.service_bus,
+    azurerm_private_dns_zone_virtual_network_link.storage,
+    azurerm_private_dns_zone_virtual_network_link.synapse,
+    azurerm_private_dns_zone_virtual_network_link.vaultcore
+  ]
 }
