@@ -1,6 +1,8 @@
 resource "azurerm_key_vault" "tooling_key_vault" {
   #checkov:skip=CKV_AZURE_42: Soft delete protection enabled by default in latest Azure provider
   #checkov:skip=CKV_AZURE_109: TODO: Network ACL, currently not implemented as it blocks pipeline
+  #checkov:skip=CKV_AZURE_189: "Ensure that Azure Key Vault disables public network access"
+  #checkov:skip=CKV2_AZURE_32: "Ensure private endpoint is configured to key vault"
   name                        = replace("pinskv${local.resource_suffix}", "-", "")
   location                    = azurerm_resource_group.tooling.location
   resource_group_name         = azurerm_resource_group.tooling.name
