@@ -2,6 +2,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
   #checkov:skip=CKV_AZURE_49: SSH key authentication not required
   #checkov:skip=CKV_AZURE_97: Encryption at host not required
   #checkov:skip=CKV_AZURE_149: Password authentication required
+  #checkov:skip=CKV_AZURE_178: "Ensure linux VM enables SSH with keys for secure communication"
   for_each = local.agent_pools
 
   name                = each.value["name"]
