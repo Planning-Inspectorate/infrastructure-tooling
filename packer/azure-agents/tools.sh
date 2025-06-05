@@ -40,10 +40,10 @@ sudo apt-get install -y --no-install-recommends \
   git-lfs \
   git-ftp
 
-# Python
+# Python(Ubuntu 22 uses 3.10 by default)
 sudo apt-get install -y --no-install-recommends \
-  python3.7 \
-  python3.7-distutils \
+  python3 \
+  python3-distutils \
   python3-pip
 
 # Docker Engine
@@ -71,8 +71,8 @@ sudo apt-get install -y terraform=1.11.4-1 # the hyphen is needed for the repo
 sudo curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.55.1/terragrunt_linux_amd64" -o /usr/bin/terragrunt && chmod 777 /usr/bin/terragrunt
 
 # Checkov
-python3.7 -m pip install --force-reinstall packaging==21
-python3.7 -m pip install -U checkov==2.2.94
+python3 -m pip install --force-reinstall packaging==21
+python3 -m pip install -U checkov==3.2.405
 
 # TFLint
 curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
@@ -105,14 +105,7 @@ nvm use default
 # Azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
-# .NET Core
-wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-sudo dpkg -i packages-microsoft-prod.deb
-rm packages-microsoft-prod.deb
-
 sudo apt-get update; \
-  sudo apt-get install -y apt-transport-https && \
-  sudo apt-get update && \
-  sudo apt-get install -y aspnetcore-runtime-6.0
+  sudo apt-get install -y apt-transport-https
 
 /usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync
