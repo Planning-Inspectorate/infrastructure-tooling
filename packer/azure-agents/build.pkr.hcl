@@ -26,7 +26,7 @@ build {
 
   source "source.azure-arm.azure-agents" {
     managed_image_resource_group_name = var.tooling_resource_group_name
-    managed_image_name                = "azure-agents-${formatdate("YYYY-MM-DD-hh", timestamp())}"
+    managed_image_name                = "azure-agents-${formatdate("YYYY-MM-DD-hhmm", timestamp())}"
 
     os_type         = "Linux"
     image_publisher = "canonical"
