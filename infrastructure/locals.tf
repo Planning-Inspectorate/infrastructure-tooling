@@ -3,10 +3,12 @@ locals {
     main = {
       name     = "pins-vmss-${local.resource_suffix}"
       nic_name = "pins-vnet-azure-agents-nic-${local.resource_suffix}"
+      sku      = "Standard_DS2_v2"
     }
     test = {
       name     = "pins-vmss-test-${local.resource_suffix}"
       nic_name = "pins-vnet-azure-agents-nic-test-${local.resource_suffix}"
+      sku      = "Standard_DS3_v2"
     }
   }
 
