@@ -9,7 +9,7 @@ resource "azurerm_cdn_frontdoor_profile" "common" {
 
 # Shared endpoints, one for each service
 resource "azurerm_cdn_frontdoor_endpoint" "common" {
-  for_each = toset(["appeals", "applications", "crowndev", "template"])
+  for_each = toset(["appeals", "applications", "crowndev", "template", "scheduling"])
 
   name                     = "pins-fde-${each.key}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.common.id
@@ -49,4 +49,3 @@ resource "azurerm_monitor_diagnostic_setting" "web_front_door" {
     ]
   }
 }
-
