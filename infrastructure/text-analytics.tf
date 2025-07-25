@@ -7,6 +7,7 @@ resource "azurerm_cognitive_account" "text_analytics" {
   kind                          = "TextAnalytics"
   public_network_access_enabled = false
   local_auth_enabled            = false
+  custom_subdomain_name         = "pins-lang-${local.resource_suffix}"
 
   sku_name = "F0"
 
