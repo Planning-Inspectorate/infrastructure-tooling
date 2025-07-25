@@ -23,6 +23,14 @@ resource "azurerm_subnet" "GatewaySubnet" {
   private_endpoint_network_policies = "Enabled"
 }
 
+resource "azurerm_subnet" "language_service" {
+  name                              = "pins-snet-language-service-${local.resource_suffix}"
+  resource_group_name               = azurerm_resource_group.tooling.name
+  virtual_network_name              = azurerm_virtual_network.tooling.name
+  address_prefixes                  = ["10.10.4.0/24"] # 256 IPs
+  private_endpoint_network_policies = "Enabled"
+}
+
 resource "azurerm_subnet" "vpn_resolver" {
   name                              = "pins-snet-vpn-resolver-${local.resource_suffix}"
   resource_group_name               = azurerm_resource_group.tooling.name
@@ -98,6 +106,18 @@ resource "azurerm_private_dns_zone" "app_service" {
 resource "azurerm_private_dns_zone_virtual_network_link" "app_service" {
   name                  = "pins-vnetlink-app-service-${local.resource_suffix}"
   private_dns_zone_name = azurerm_private_dns_zone.app_service.name
+  resource_group_name   = azurerm_resource_group.tooling.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
+
+resource "azurerm_private_dns_zone" "cognitive" {
+  name                = "privatelink.cognitiveservices.azure.com"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "cognitive" {
+  name                  = "pins-vnetlink-cognitive-${local.resource_suffix}"
+  private_dns_zone_name = azurerm_private_dns_zone.cognitive.name
   resource_group_name   = azurerm_resource_group.tooling.name
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
@@ -239,6 +259,7 @@ resource "azapi_update_resource" "main" {
     azurerm_private_dns_zone_virtual_network_link.azure_synapse,
     azurerm_private_dns_zone_virtual_network_link.azure_synapse_dev,
     azurerm_private_dns_zone_virtual_network_link.app_service,
+    azurerm_private_dns_zone_virtual_network_link.cognitive,
     azurerm_private_dns_zone_virtual_network_link.cosmosdb,
     azurerm_private_dns_zone_virtual_network_link.back_office_sql_server,
     azurerm_private_dns_zone_virtual_network_link.redis,
