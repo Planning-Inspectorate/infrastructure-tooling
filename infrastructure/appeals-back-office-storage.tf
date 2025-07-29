@@ -24,7 +24,7 @@ resource "azurerm_storage_account" "appeals_back_office_terraform_storage" {
 }
 
 resource "azurerm_storage_container" "appeals_back_office_terraform_storage_containers" {
-  for_each = toset(["dev", "test", "prod", "training"])
+  for_each = toset(["dev", "test", "prod", "training", "staging"])
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "terraform-state-appeals-back-office-${each.key}"
