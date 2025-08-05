@@ -113,3 +113,22 @@ sudo apt-get update; \
   sudo apt-get install -y apt-transport-https
 
 /usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync
+
+echo ""
+echo "🎉 Environment setup complete!"
+echo "📦 Below are key tools and versions installed:"
+# ... version echoes ...
+echo "✅ Installed Versions Snapshot:"
+echo "Docker: $(docker --version)"
+echo "Docker Compose: $(docker-compose --version)"
+echo "Git: $(git --version)"
+echo "Python: $(python3 --version)"
+echo "Pip: $(pip3 --version)"
+echo "Terragrunt: $(terragrunt --version)"
+echo "Terraform: $(terraform version | head -n 1)"
+echo "Checkov: $(checkov --version)"
+echo "TFLint: $(tflint --version)"
+echo "Node: $(node --version)"
+echo "NVM: $(nvm --version)"
+echo "Azure CLI: $(az version | grep azure-cli)"
+echo "TERM: $TERM"
