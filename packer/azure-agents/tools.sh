@@ -114,7 +114,7 @@ sudo apt-get update; \
 
 /usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync
 
-echo ""
+echo "##################################################################"
 echo "🎉 Environment setup complete!"
 echo "📦 Below are key tools and versions installed:"
 # ... version echoes ...
