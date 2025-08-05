@@ -1,5 +1,12 @@
 export DEBIAN_FRONTEND=noninteractive
 
+# Set TERM for all login shells
+echo 'export TERM=xterm-256color' | sudo tee /etc/profile.d/env.sh
+sudo chmod +x /etc/profile.d/env.sh
+
+# Source environment to apply it immediately
+source /etc/profile.d/env.sh
+
 sudo echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 sudo echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries
 sudo echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
