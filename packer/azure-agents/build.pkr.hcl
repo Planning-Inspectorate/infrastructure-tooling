@@ -11,10 +11,9 @@ source "azure-arm" "azure-agents" {
   azure_tags = {
     Project          = "tooling"
     CreatedBy        = "packer"
-    NodeVersion      = "22.18"
-    TerraformVersion = "1.12.2"
+    NodeVersion      = "22.19"
+    TerraformVersion = "1.13.2"
   }
-
   client_id       = var.client_id
   client_secret   = var.client_secret
   tenant_id       = var.tenant_id
