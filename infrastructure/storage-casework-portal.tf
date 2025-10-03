@@ -25,7 +25,7 @@ resource "azurerm_storage_account" "casework_portal_terraform_storage" {
 }
 
 resource "azurerm_storage_container" "casework_portal_terraform_storage_containers" {
-  for_each = toset(["prod"])
+  for_each = toset(["dev", "prod"])
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "terraform-state-casework-portal-${each.key}"
