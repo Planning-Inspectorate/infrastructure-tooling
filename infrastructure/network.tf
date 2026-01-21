@@ -158,6 +158,18 @@ resource "azurerm_private_dns_zone_virtual_network_link" "internal" {
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
 
+resource "azurerm_private_dns_zone" "openai" {
+  name                = "privatelink.openai.azure.com"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "openai" {
+  name                  = "pins-vnetlink-openai-${local.resource_suffix}"
+  private_dns_zone_name = azurerm_private_dns_zone.openai.name
+  resource_group_name   = azurerm_resource_group.tooling.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
+
 resource "azurerm_private_dns_zone" "redis" {
   name                = "privatelink.redis.cache.windows.net"
   resource_group_name = azurerm_resource_group.tooling.name
@@ -229,8 +241,9 @@ locals {
       "azure_synapse"          = azurerm_private_dns_zone_virtual_network_link.azure_synapse,
       "azure_synapse_dev"      = azurerm_private_dns_zone_virtual_network_link.azure_synapse_dev,
       "app_service"            = azurerm_private_dns_zone_virtual_network_link.app_service,
-      "cosmosdb"               = azurerm_private_dns_zone_virtual_network_link.cosmosdb,
       "back_office_sql_server" = azurerm_private_dns_zone_virtual_network_link.back_office_sql_server,
+      "cosmosdb"               = azurerm_private_dns_zone_virtual_network_link.cosmosdb,
+      "openai"                 = azurerm_private_dns_zone_virtual_network_link.openai
       "redis"                  = azurerm_private_dns_zone_virtual_network_link.redis,
       "service_bus"            = azurerm_private_dns_zone_virtual_network_link.service_bus,
       "synapse"                = azurerm_private_dns_zone_virtual_network_link.synapse,
@@ -259,9 +272,10 @@ resource "azapi_update_resource" "main" {
     azurerm_private_dns_zone_virtual_network_link.azure_synapse,
     azurerm_private_dns_zone_virtual_network_link.azure_synapse_dev,
     azurerm_private_dns_zone_virtual_network_link.app_service,
+    azurerm_private_dns_zone_virtual_network_link.back_office_sql_server,
     azurerm_private_dns_zone_virtual_network_link.cognitive,
     azurerm_private_dns_zone_virtual_network_link.cosmosdb,
-    azurerm_private_dns_zone_virtual_network_link.back_office_sql_server,
+    azurerm_private_dns_zone_virtual_network_link.openai,
     azurerm_private_dns_zone_virtual_network_link.redis,
     azurerm_private_dns_zone_virtual_network_link.service_bus,
     azurerm_private_dns_zone_virtual_network_link.storage,
