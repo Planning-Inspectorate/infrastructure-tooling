@@ -3,7 +3,7 @@ data "azurerm_client_config" "current" {}
 data "azurerm_subscription" "current" {}
 
 data "azurerm_image" "azure_agents" {
-  name_regex          = "azure-agents-2026-01-15-1511"
+  name_regex          = "azure-agents-2026-02-03-1136"
   sort_descending     = true
   resource_group_name = azurerm_resource_group.tooling.name
 }
