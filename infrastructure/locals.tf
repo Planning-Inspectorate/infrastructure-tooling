@@ -22,4 +22,19 @@ locals {
     Region      = var.primary_region
     ServiceName = "shared"
   }
+
+  # Subscriptions to monitor for Service Health alerts (matched by exact display name)
+  monitored_subscription_names = toset([
+    "pins-odt-apps-prod-sub",
+    "pins-odt-tooling-shared-sub",
+    "pins-odw-data-prod-sub",
+  ])
+
+  # Filter available subscriptions to only those we want to monitor
+  # Keyed by subscription_id for stable for_each
+  service_health_subscriptions = {
+    for sub in data.azurerm_subscriptions.available.subscriptions :
+    sub.subscription_id => sub
+    if contains(local.monitored_subscription_names, sub.display_name)
+  }
 }
