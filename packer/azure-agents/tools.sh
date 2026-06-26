@@ -1,5 +1,10 @@
 export DEBIAN_FRONTEND=noninteractive
 
+# Detect the CPU architecture so the same script works for both amd64 and arm64
+# images (Google Chrome, the HashiCorp apt repo and the Terragrunt binary all
+# differ by, or are unavailable on, arm64).
+ARCH=$(dpkg --print-architecture) # amd64 or arm64
+
 sudo echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 sudo echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80-retries
 sudo echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
@@ -46,16 +51,24 @@ sudo apt-get install -y --no-install-recommends \
   python3-distutils \
   python3-pip
 
-## Install Chromium for test images
-# Add the Google Chrome signing key
-wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+## Install a Chromium-based browser for test images.
+## Google Chrome only ships an amd64 Linux package, so on arm64 we install
+## Chromium instead (the same engine used by Playwright/Cypress/Puppeteer).
+if [ "$ARCH" = "amd64" ]; then
+  # Add the Google Chrome signing key
+  wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 
-# Add the Google Chrome repository
-sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+  # Add the Google Chrome repository
+  sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
 
-# Update the package list and install Google Chrome
-sudo apt-get update
-sudo apt-get install -y google-chrome-stable
+  # Update the package list and install Google Chrome
+  sudo apt-get update
+  sudo apt-get install -y google-chrome-stable
+else
+  # arm64: install Chromium via snap (Ubuntu 22.04's chromium apt package is a
+  # transitional snap wrapper anyway).
+  sudo snap install chromium
+fi
 
 # Docker Engine
 sudo apt-get install -y docker.io
@@ -75,11 +88,11 @@ sudo snap install powershell --classic
 
 # Terraform
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+sudo apt-add-repository "deb [arch=${ARCH}] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 sudo apt-get install -y terraform=1.15.5-1 # the hyphen is needed for the repo
 
 # Terragrunt 0.55.1
-sudo curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.55.1/terragrunt_linux_amd64" -o /usr/bin/terragrunt && chmod 777 /usr/bin/terragrunt
+sudo curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.55.1/terragrunt_linux_${ARCH}" -o /usr/bin/terragrunt && chmod 777 /usr/bin/terragrunt
 
 # Checkov
 python3 -m pip install --force-reinstall packaging==21
