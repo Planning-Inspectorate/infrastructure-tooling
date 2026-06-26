@@ -16,17 +16,17 @@ locals {
     spec_1 = {
       name     = "pins-vmss-spec-1-${local.resource_suffix}"
       nic_name = "pins-vnet-azure-agents-nic-spec-1-${local.resource_suffix}"
-      sku      = "Standard_D4plds_v5"
+      sku      = "Standard_D4lds_v5"
     }
     spec_2 = {
       name     = "pins-vmss-spec-2-${local.resource_suffix}"
       nic_name = "pins-vnet-azure-agents-nic-spec-2-${local.resource_suffix}"
-      sku      = "Standard_D4pds_v5"
+      sku      = "Standard_D4ds_v5"
     }
     spec_3 = {
       name     = "pins-vmss-spec-3-${local.resource_suffix}"
       nic_name = "pins-vnet-azure-agents-nic-spec-3-${local.resource_suffix}"
-      sku      = "Standard_D8plds_v5"
+      sku      = "Standard_D8lds_v5"
     }
   }
 
