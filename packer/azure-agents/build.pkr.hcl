@@ -24,8 +24,15 @@ build {
   name = "azure-devops-agents-arm"
 
   source "source.azure-arm.azure-agents" {
-    managed_image_resource_group_name = var.tooling_resource_group_name
-    managed_image_name                = "azure-agents-arm-${formatdate("YYYY-MM-DD-hhmm", timestamp())}"
+    # Publish directly into an Azure Compute Gallery image definition.
+    # Managed images do not support the Arm64 CPU architecture, so a gallery
+    # destination is required for Arm64 images.
+    shared_image_gallery_destination {
+      resource_group = var.tooling_resource_group_name
+      gallery_name   = var.gallery_name
+      image_name     = var.gallery_image_definition
+      image_version  = var.image_version
+    }
 
     os_type         = "Linux"
     image_publisher = "canonical"
@@ -66,3 +73,20 @@ variable "tooling_resource_group_name" {
   description = "The name of the Tooling resource group where the image will be created"
   type        = string
 }
+
+variable "gallery_name" {
+  description = "The name of the Azure Compute Gallery to publish the image into"
+  type        = string
+}
+
+variable "gallery_image_definition" {
+  description = "The name of the gallery image definition (must be the Arm64 definition)"
+  type        = string
+  default     = "azure-agents-arm64"
+}
+
+variable "image_version" {
+  description = "The gallery image version in major.minor.patch format (e.g. 2026.6.26). Segments must be numeric with no leading zeros."
+  type        = string
+}
+

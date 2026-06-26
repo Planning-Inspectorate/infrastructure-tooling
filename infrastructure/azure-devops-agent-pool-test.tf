@@ -1,6 +1,7 @@
-data "azurerm_image" "azure_agents_gen2" {
-  name_regex          = "azure-agents-gen2"
-  sort_descending     = true
+data "azurerm_shared_image_version" "azure_agents_arm64" {
+  name                = "latest"
+  image_name          = azurerm_shared_image.azure_agents_arm64.name
+  gallery_name        = azurerm_shared_image_gallery.tooling.name
   resource_group_name = azurerm_resource_group.tooling.name
 }
 
@@ -26,7 +27,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool_test
 
   platform_fault_domain_count = 1
 
-  source_image_id = data.azurerm_image.azure_agents_gen2.id
+  source_image_id = data.azurerm_shared_image_version.azure_agents_arm64.id
 
   boot_diagnostics {
     storage_account_uri = null
