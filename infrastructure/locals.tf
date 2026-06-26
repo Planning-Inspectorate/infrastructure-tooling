@@ -12,6 +12,14 @@ locals {
     }
   }
 
+  agent_pools_test = {
+    arm_spec_1 = {
+      name     = "pins-vmss-arm-spec-1-${local.resource_suffix}"
+      nic_name = "pins-vnet-azure-agents-nic-spec-1-${local.resource_suffix}"
+      sku      = "Standard_D4pds_v6"
+    }
+  }
+
   shared_terraform_resource_group = "pins-rg-shared-terraform-uks"
 
   resource_suffix = "shared-${var.environment}-${module.azure_region_primary.location_short}"

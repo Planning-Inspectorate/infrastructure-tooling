@@ -21,16 +21,16 @@ source "azure-arm" "azure-agents" {
 }
 
 build {
-  name = "azure-devops-agents"
+  name = "azure-devops-agents-gen2"
 
   source "source.azure-arm.azure-agents" {
     managed_image_resource_group_name = var.tooling_resource_group_name
-    managed_image_name                = "azure-agents-${formatdate("YYYY-MM-DD-hhmm", timestamp())}"
+    managed_image_name                = "azure-agents-gen2-${formatdate("YYYY-MM-DD-hhmm", timestamp())}"
 
     os_type         = "Linux"
     image_publisher = "canonical"
     image_offer     = "0001-com-ubuntu-server-jammy"
-    image_sku       = "22_04-lts"
+    image_sku       = "22_04-lts-gen2"
 
     location = "UK South"
     vm_size  = "Standard_DS2_v2"
