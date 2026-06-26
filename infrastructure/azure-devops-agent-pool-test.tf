@@ -1,3 +1,9 @@
+data "azurerm_image" "azure_agents_gen2" {
+  name_regex          = "azure-agents-gen2"
+  sort_descending     = true
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+
 resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool_test_1" {
   #checkov:skip=CKV_AZURE_49: SSH key authentication not required
   #checkov:skip=CKV_AZURE_97: Encryption at host not required
@@ -20,7 +26,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool_test
 
   platform_fault_domain_count = 1
 
-  source_image_id = data.azurerm_image.azure_agents.id
+  source_image_id = data.azurerm_image.azure_agents_gen2.id
 
   boot_diagnostics {
     storage_account_uri = null
