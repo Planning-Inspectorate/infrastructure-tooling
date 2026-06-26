@@ -3,7 +3,7 @@ locals {
     main = {
       name     = "pins-vmss-${local.resource_suffix}"
       nic_name = "pins-vnet-azure-agents-nic-${local.resource_suffix}"
-      sku      = "Standard_D4lds_v5"
+      sku      = "Standard_DS2_v2"
       image_id = data.azurerm_image.azure_agents.id
     }
     test = {
