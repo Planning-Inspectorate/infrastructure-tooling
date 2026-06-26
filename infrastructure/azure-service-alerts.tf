@@ -14,17 +14,12 @@ resource "azurerm_monitor_action_group" "azure_service_alerts" {
   tags = local.tags
 }
 
-# Data block to look up all available subscriptions
-data "azurerm_subscriptions" "available" {
-}
-
-# Activity Log Alerts for each subscription
-resource "azurerm_monitor_activity_log_alert" "service_health" {
-  for_each = local.service_health_subscriptions
-
-  name                = "Azure Service health ${each.value.display_name}"
+# Service health alerts for tooling sub
+# this alert must be in the same sub as the sub being monitored
+resource "azurerm_monitor_activity_log_alert" "tooling_service_health" {
+  name                = "Azure Service health - tooling"
   resource_group_name = azurerm_resource_group.common.name
-  scopes              = [each.value.id]
+  scopes              = [data.azurerm_subscription.current.id]
   enabled             = true
   location            = "global"
 
