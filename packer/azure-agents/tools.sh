@@ -73,10 +73,17 @@ sudo chmod +x /usr/local/bin/docker-compose
 # Powershell
 sudo snap install powershell --classic
 
+## Azure PowerShell Modules (Az) - used for key vault and app reg scanning
+pwsh -Command "Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted"
+pwsh -Command "Install-Module -Name Az -Force -AllowClobber -Scope AllUsers -Repository PSGallery"
+
+# Terraform
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+
 # Terraform
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get install -y terraform=1.15.5-1 # the hyphen is needed for the repo
+sudo apt-get install -y terraform=1.15.7-1 # the hyphen is needed for the repo
 
 # Terragrunt 0.55.1
 sudo curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.55.1/terragrunt_linux_amd64" -o /usr/bin/terragrunt && chmod 777 /usr/bin/terragrunt
