@@ -5,7 +5,7 @@ data "azurerm_storage_account" "shared_terraform_storage" { # I\nfrastructure En
 
 locals {
   state_file_storage_accounts = {
-    "pinsstsharedtfstateuks" = data.azurerm_storage_account.shared_terraform_storage.id
+    # "pinsstsharedtfstateuks" = data.azurerm_storage_account.shared_terraform_storage.id
     # "pinssttfstateuksappealbo" = azurerm_storage_account.appeals_back_office_terraform_storage.id
     # "pinssttfstateada"         = azurerm_storage_account.appeals_decision_assistant_terraform_storage.id
     # "pinssttfstateuksappealfo" = azurerm_storage_account.appeals_front_office_terraform_storage.id
