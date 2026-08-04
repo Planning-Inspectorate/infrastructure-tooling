@@ -19,6 +19,7 @@ resource "azurerm_storage_account" "template_app_terraform_storage" {
   account_replication_type         = "LRS"
   min_tls_version                  = "TLS1_2"
   cross_tenant_replication_enabled = true
+  public_network_access_enabled    = false
 
   tags = local.tags
 }
