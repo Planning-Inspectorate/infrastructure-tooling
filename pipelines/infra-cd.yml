@@ -21,10 +21,6 @@ extends:
             isDeployment: false
             timeoutInMinutes: 30
             steps:
-              - script: |
-                  echo "##vso[task.setvariable variable=TF_VAR_create_storage_containers]false"
-                displayName: 'Disable storage container management in Terraform'
-
               - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_plan.yml@templates
                 parameters:
                   subscriptionId: $(SUBSCRIPTION_ID)
@@ -35,10 +31,6 @@ extends:
         deploymentJobs:
           - name: Terraform Apply
             steps:
-              - script: |
-                  echo "##vso[task.setvariable variable=TF_VAR_create_storage_containers]false"
-                displayName: 'Disable storage container management in Terraform'
-
               - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_apply.yml@templates
                 parameters:
                   subscriptionId: $(SUBSCRIPTION_ID)
