@@ -24,8 +24,33 @@ resource "azurerm_storage_account" "template_app_terraform_storage" {
   tags = local.tags
 }
 
+resource "azurerm_private_endpoint" "template_app_private_endpoint" {
+  name                = "pins-pe-${azurerm_storage_account.template_app_terraform_storage.name}-${local.resource_suffix}"
+  location            = azurerm_resource_group.tooling.location
+  resource_group_name = azurerm_resource_group.tooling.name
+  subnet_id           = azurerm_subnet.azure_agents.id
+
+  private_dns_zone_group {
+    name                 = "pe-private-dns-zone-group-${azurerm_storage_account.template_app_terraform_storage.name}"
+    private_dns_zone_ids = [azurerm_private_dns_zone.storage["blob"].id]
+  }
+
+  private_service_connection {
+    name                           = "privateendpointconnection-${azurerm_storage_account.template_app_terraform_storage.name}"
+    private_connection_resource_id = azurerm_storage_account.template_app_terraform_storage.id
+    subresource_names              = ["blob"]
+    is_manual_connection           = false
+  }
+
+  depends_on = [
+    azurerm_private_dns_zone_virtual_network_link.storage
+  ]
+
+  tags = local.tags
+}
+
 resource "azurerm_storage_container" "template_app_terraform_storage_containers" {
-  for_each = var.create_storage_containers ? toset(["dev", "test"]) : toset([])
+  for_each = toset(["dev", "test"])
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "terraform-state-devops-template-${each.key}"
@@ -34,7 +59,7 @@ resource "azurerm_storage_container" "template_app_terraform_storage_containers"
 }
 
 resource "azurerm_storage_container" "template_packer_terraform_storage_containers" {
-  for_each = var.create_storage_containers ? toset(["dev"]) : toset([])
+  for_each = toset(["dev"]) 
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "terraform-state-devops-template-packer-${each.key}"

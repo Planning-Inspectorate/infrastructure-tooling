@@ -15,9 +15,3 @@ variable "secondary_region" {
   type        = string
   default     = "uk-west"
 }
-
-variable "create_storage_containers" {
-  description = "Toggle to enable creation/management of storage containers. Pipelines can set this to false to avoid touching containers."
-  type        = bool
-  default     = false
-}
