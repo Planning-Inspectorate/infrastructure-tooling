@@ -25,7 +25,7 @@ resource "azurerm_storage_account" "template_app_terraform_storage" {
 }
 
 resource "azurerm_storage_container" "template_app_terraform_storage_containers" {
-  for_each = toset(["dev", "test"])
+  for_each = var.create_storage_containers ? toset(["dev", "test"]) : toset([])
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "terraform-state-devops-template-${each.key}"
@@ -34,7 +34,7 @@ resource "azurerm_storage_container" "template_app_terraform_storage_containers"
 }
 
 resource "azurerm_storage_container" "template_packer_terraform_storage_containers" {
-  for_each = toset(["dev"])
+  for_each = var.create_storage_containers ? toset(["dev"]) : toset([])
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "terraform-state-devops-template-packer-${each.key}"
