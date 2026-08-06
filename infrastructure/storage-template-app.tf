@@ -24,6 +24,7 @@ resource "azurerm_storage_account" "template_app_terraform_storage" {
   network_rules {
     default_action             = "Deny"
     bypass                     = ["AzureServices"]
+    virtual_network_subnet_ids = [azurerm_subnet.azure_agents.id]
   }
 
   tags = local.tags
