@@ -64,11 +64,11 @@ resource "azurerm_storage_container" "template_app_terraform_storage_containers"
   container_access_type = "private"
 }
 
-resource "azurerm_storage_container" "template_packer_terraform_storage_containers" {
-  for_each = toset(["dev"])
+# resource "azurerm_storage_container" "template_packer_terraform_storage_containers" {
+#   for_each = toset(["dev"])
 
-  #checkov:skip=CKV2_AZURE_21: logging not required
-  name                  = "terraform-state-devops-template-packer-${each.key}"
-  storage_account_name  = azurerm_storage_account.template_app_terraform_storage.name
-  container_access_type = "private"
-}
+#   #checkov:skip=CKV2_AZURE_21: logging not required
+#   name                  = "terraform-state-devops-template-packer-${each.key}"
+#   storage_account_name  = azurerm_storage_account.template_app_terraform_storage.name
+#   container_access_type = "private"
+# }
