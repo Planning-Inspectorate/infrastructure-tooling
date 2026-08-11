@@ -19,9 +19,41 @@ resource "azurerm_storage_account" "template_app_terraform_storage" {
   account_replication_type         = "LRS"
   min_tls_version                  = "TLS1_2"
   cross_tenant_replication_enabled = true
+  public_network_access_enabled    = false
+
+  network_rules {
+    default_action             = "Deny"
+    bypass                     = ["AzureServices"]
+    virtual_network_subnet_ids = [azurerm_subnet.azure_agents.id]
+  }
 
   tags = local.tags
 }
+
+# resource "azurerm_private_endpoint" "template_app_private_endpoint" {
+#   name                = "pins-pe-${azurerm_storage_account.template_app_terraform_storage.name}-${local.resource_suffix}"
+#   location            = azurerm_resource_group.tooling.location
+#   resource_group_name = azurerm_resource_group.tooling.name
+#   subnet_id           = azurerm_subnet.azure_agents.id
+
+#   private_dns_zone_group {
+#     name                 = "pe-private-dns-zone-group-${azurerm_storage_account.template_app_terraform_storage.name}"
+#     private_dns_zone_ids = [azurerm_private_dns_zone.storage["blob"].id]
+#   }
+
+#   private_service_connection {
+#     name                           = "privateendpointconnection-${azurerm_storage_account.template_app_terraform_storage.name}"
+#     private_connection_resource_id = azurerm_storage_account.template_app_terraform_storage.id
+#     subresource_names              = ["blob"]
+#     is_manual_connection           = false
+#   }
+
+#   depends_on = [
+#     azurerm_private_dns_zone_virtual_network_link.storage
+#   ]
+
+#   tags = local.tags
+# }
 
 resource "azurerm_storage_container" "template_app_terraform_storage_containers" {
   for_each = toset(["dev", "test"])
