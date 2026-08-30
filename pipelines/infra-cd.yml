@@ -2,6 +2,8 @@ trigger: none
 
 pr: none
 
+pool: pins-odt-agent-pool
+
 resources:
   repositories:
     - repository: templates
