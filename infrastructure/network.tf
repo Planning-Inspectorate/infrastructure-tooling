@@ -158,6 +158,18 @@ resource "azurerm_private_dns_zone_virtual_network_link" "back_office_sql_server
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
 
+resource "azurerm_private_dns_zone" "database_mysql" {
+  name                = "privatelink.mysql.database.azure.com"
+  resource_group_name = azurerm_resource_group.tooling.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "database_mysql" {
+  name                  = "pins-vnetlink-mysql-server-${local.resource_suffix}"
+  private_dns_zone_name = azurerm_private_dns_zone.database_mysql.name
+  resource_group_name   = azurerm_resource_group.tooling.name
+  virtual_network_id    = azurerm_virtual_network.tooling.id
+}
+
 resource "azurerm_private_dns_zone" "internal" {
   name                = "pins.internal"
   resource_group_name = azurerm_resource_group.tooling.name
@@ -268,6 +280,7 @@ locals {
       "back_office_sql_server" = azurerm_private_dns_zone_virtual_network_link.back_office_sql_server
       "cognitive"              = azurerm_private_dns_zone_virtual_network_link.cognitive,
       "cosmosdb"               = azurerm_private_dns_zone_virtual_network_link.cosmosdb,
+      "mysql"                  = azurerm_private_dns_zone_virtual_network_link.database_mysql,
       "openai"                 = azurerm_private_dns_zone_virtual_network_link.openai
       "redis"                  = azurerm_private_dns_zone_virtual_network_link.redis,
       "service_bus"            = azurerm_private_dns_zone_virtual_network_link.service_bus,
@@ -301,6 +314,7 @@ resource "azapi_update_resource" "main" {
     azurerm_private_dns_zone_virtual_network_link.back_office_sql_server,
     azurerm_private_dns_zone_virtual_network_link.cognitive,
     azurerm_private_dns_zone_virtual_network_link.cosmosdb,
+    azurerm_private_dns_zone_virtual_network_link.database_mysql,
     azurerm_private_dns_zone_virtual_network_link.openai,
     azurerm_private_dns_zone_virtual_network_link.redis,
     azurerm_private_dns_zone_virtual_network_link.service_bus,
