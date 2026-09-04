@@ -28,6 +28,6 @@ resource "azurerm_storage_container" "prototypes_common_infrastructure_terraform
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "terraform-state-prototypes-common-infrastructure-${each.key}"
-  storage_account_name  = azurerm_storage_account.prototypes_common_infrastructure_terraform_storage.name
+  storage_account_id    = azurerm_storage_account.prototypes_common_infrastructure_terraform_storage.id
   container_access_type = "private"
 }

@@ -28,6 +28,6 @@ resource "azurerm_storage_container" "appeals_back_office_terraform_storage_cont
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "terraform-state-appeals-back-office-${each.key}"
-  storage_account_name  = azurerm_storage_account.appeals_back_office_terraform_storage.name
+  storage_account_id    = azurerm_storage_account.appeals_back_office_terraform_storage.id
   container_access_type = "private"
 }

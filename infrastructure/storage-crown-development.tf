@@ -27,6 +27,6 @@ resource "azurerm_storage_container" "crown_development_terraform_storage_contai
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "terraform-state-crown-development-${each.key}"
-  storage_account_name  = azurerm_storage_account.crown_development_terraform_storage.name
+  storage_account_id    = azurerm_storage_account.crown_development_terraform_storage.id
   container_access_type = "private"
 }
