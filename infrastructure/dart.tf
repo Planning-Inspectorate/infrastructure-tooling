@@ -27,6 +27,6 @@ resource "azurerm_storage_container" "dart_terraform_storage_containers" {
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "dart-terraform-state-${each.key}"
-  storage_account_name  = azurerm_storage_account.dart_terraform_storage.name
+  storage_account_id    = azurerm_storage_account.dart_terraform_storage.id # Let's test if any data loss cause of recreation
   container_access_type = "private"
 }

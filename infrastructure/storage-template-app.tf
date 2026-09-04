@@ -28,7 +28,7 @@ resource "azurerm_storage_container" "template_app_terraform_storage_containers"
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "terraform-state-devops-template-${each.key}"
-  storage_account_name  = azurerm_storage_account.template_app_terraform_storage.name
+  storage_account_id    = azurerm_storage_account.template_app_terraform_storage.id
   container_access_type = "private"
 }
 
@@ -37,6 +37,6 @@ resource "azurerm_storage_container" "template_packer_terraform_storage_containe
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "terraform-state-devops-template-packer-${each.key}"
-  storage_account_name  = azurerm_storage_account.template_app_terraform_storage.name
+  storage_account_id    = azurerm_storage_account.template_app_terraform_storage.id
   container_access_type = "private"
 }
