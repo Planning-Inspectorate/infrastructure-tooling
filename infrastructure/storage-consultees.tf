@@ -22,6 +22,7 @@ resource "azurerm_storage_account" "consultees_terraform_storage" {
   account_replication_type         = "LRS"
   min_tls_version                  = "TLS1_2"
   cross_tenant_replication_enabled = true
+  allow_nested_items_to_be_public  = true
 
   tags = local.tags
 }

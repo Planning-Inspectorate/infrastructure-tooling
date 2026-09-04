@@ -14,7 +14,7 @@ resource "azurerm_container_registry" "acr" {
 
   georeplications {
     location                        = module.azure_region_secondary.location
-    global_endpoint_routing_enabled = true
+    global_endpoint_routing_enabled = false
     tags                            = merge(local.tags, { Region = var.secondary_region })
   }
 
