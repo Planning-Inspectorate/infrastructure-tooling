@@ -18,6 +18,7 @@ resource "azurerm_storage_account" "dart_terraform_storage" {
   account_replication_type         = "LRS"
   min_tls_version                  = "TLS1_2"
   cross_tenant_replication_enabled = true
+  allow_nested_items_to_be_public  = true
 
   tags = local.tags
 }
@@ -27,6 +28,6 @@ resource "azurerm_storage_container" "dart_terraform_storage_containers" {
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "dart-terraform-state-${each.key}"
-  storage_account_name  = azurerm_storage_account.dart_terraform_storage.name
+  storage_account_id    = azurerm_storage_account.dart_terraform_storage.id # Let's test if any data loss cause of recreation
   container_access_type = "private"
 }
