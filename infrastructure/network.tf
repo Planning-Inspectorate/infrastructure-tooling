@@ -68,10 +68,10 @@ resource "azurerm_private_dns_zone" "app_config" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "app_config" {
-  name                  = "pins-vnetlink-app-config-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.app_config.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-app-config-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.app_config.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 resource "azurerm_private_dns_zone" "azure_synapse" {
@@ -104,10 +104,10 @@ resource "azurerm_private_dns_zone" "app_service" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "app_service" {
-  name                  = "pins-vnetlink-app-service-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.app_service.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-app-service-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.app_service.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 resource "azurerm_private_dns_zone" "ai_service" {
@@ -116,10 +116,10 @@ resource "azurerm_private_dns_zone" "ai_service" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "ai_service" {
-  name                  = "pins-vnetlink-ai-service-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.ai_service.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-ai-service-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.ai_service.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 resource "azurerm_private_dns_zone" "cognitive" {
@@ -128,10 +128,10 @@ resource "azurerm_private_dns_zone" "cognitive" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "cognitive" {
-  name                  = "pins-vnetlink-cognitive-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.cognitive.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-cognitive-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.cognitive.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 resource "azurerm_private_dns_zone" "cosmosdb" {
@@ -140,10 +140,10 @@ resource "azurerm_private_dns_zone" "cosmosdb" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "cosmosdb" {
-  name                  = "pins-vnetlink-cosmosdb-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.cosmosdb.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-cosmosdb-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.cosmosdb.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 resource "azurerm_private_dns_zone" "database" {
@@ -152,10 +152,10 @@ resource "azurerm_private_dns_zone" "database" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "back_office_sql_server" {
-  name                  = "pins-vnetlink-sql-server-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.database.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-sql-server-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.database.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 resource "azurerm_private_dns_zone" "database_mysql" {
@@ -164,10 +164,10 @@ resource "azurerm_private_dns_zone" "database_mysql" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "database_mysql" {
-  name                  = "pins-vnetlink-mysql-server-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.database_mysql.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-mysql-server-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.database_mysql.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 resource "azurerm_private_dns_zone" "internal" {
@@ -176,10 +176,10 @@ resource "azurerm_private_dns_zone" "internal" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "internal" {
-  name                  = "pins-vnetlink-internal-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.internal.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-internal-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.internal.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 resource "azurerm_private_dns_zone" "openai" {
@@ -188,10 +188,10 @@ resource "azurerm_private_dns_zone" "openai" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "openai" {
-  name                  = "pins-vnetlink-openai-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.openai.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-openai-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.openai.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 resource "azurerm_private_dns_zone" "redis" {
@@ -199,10 +199,10 @@ resource "azurerm_private_dns_zone" "redis" {
   resource_group_name = azurerm_resource_group.tooling.name
 }
 resource "azurerm_private_dns_zone_virtual_network_link" "redis" {
-  name                  = "pins-vnetlink-redis-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.redis.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-redis-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.redis.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 resource "azurerm_private_dns_zone" "managed_redis" {
@@ -210,10 +210,10 @@ resource "azurerm_private_dns_zone" "managed_redis" {
   resource_group_name = azurerm_resource_group.tooling.name
 }
 resource "azurerm_private_dns_zone_virtual_network_link" "managed_redis" {
-  name                  = "pins-vnetlink-managed-redis-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.managed_redis.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-managed-redis-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.managed_redis.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 resource "azurerm_private_dns_zone" "service_bus" {
@@ -221,10 +221,10 @@ resource "azurerm_private_dns_zone" "service_bus" {
   resource_group_name = azurerm_resource_group.tooling.name
 }
 resource "azurerm_private_dns_zone_virtual_network_link" "service_bus" {
-  name                  = "pins-vnetlink-service-bus-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.service_bus.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-service-bus-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.service_bus.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 locals {
@@ -240,10 +240,10 @@ resource "azurerm_private_dns_zone" "storage" {
 resource "azurerm_private_dns_zone_virtual_network_link" "storage" {
   for_each = toset(local.storage_zones)
 
-  name                  = "pins-vnetlink-${each.key}-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.storage[each.key].name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-${each.key}-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.storage[each.key].id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 resource "azurerm_private_dns_zone" "synapse" {
@@ -251,10 +251,10 @@ resource "azurerm_private_dns_zone" "synapse" {
   resource_group_name = azurerm_resource_group.tooling.name
 }
 resource "azurerm_private_dns_zone_virtual_network_link" "synapse" {
-  name                  = "pins-vnetlink-synapse-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.synapse.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-synapse-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.synapse.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 resource "azurerm_private_dns_zone" "vaultcore" {
@@ -263,10 +263,10 @@ resource "azurerm_private_dns_zone" "vaultcore" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "vaultcore" {
-  name                  = "pins-vnetlink-vaultcore-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.vaultcore.name
-  resource_group_name   = azurerm_resource_group.tooling.name
-  virtual_network_id    = azurerm_virtual_network.tooling.id
+  name                = "pins-vnetlink-vaultcore-${local.resource_suffix}"
+  private_dns_zone_id = azurerm_private_dns_zone.vaultcore.id
+  resource_group_name = azurerm_resource_group.tooling.name
+  virtual_network_id  = azurerm_virtual_network.tooling.id
 }
 
 locals {
