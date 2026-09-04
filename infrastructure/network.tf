@@ -75,13 +75,13 @@ resource "azurerm_private_dns_zone_virtual_network_link" "app_config" {
 }
 
 resource "azurerm_private_dns_zone" "azure_synapse" {
-  name                = "privatelink.azuresynapse.net"
+  name                = "privatelink.azuresynapse.net" # Data call on this now?
   resource_group_name = azurerm_resource_group.tooling.name
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "azure_synapse" {
   name                  = "pins-vnetlink-az-synapse-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.azure_synapse.name
+  private_dns_zone_id   = azurerm_private_dns_zone.azure_synapse.id
   resource_group_name   = azurerm_resource_group.tooling.name
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
@@ -93,7 +93,7 @@ resource "azurerm_private_dns_zone" "azure_synapse_dev" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "azure_synapse_dev" {
   name                  = "pins-vnetlink-az-synapse-dev-${local.resource_suffix}"
-  private_dns_zone_name = azurerm_private_dns_zone.azure_synapse_dev.name
+  private_dns_zone_id = azurerm_private_dns_zone.azure_synapse_dev.id
   resource_group_name   = azurerm_resource_group.tooling.name
   virtual_network_id    = azurerm_virtual_network.tooling.id
 }
