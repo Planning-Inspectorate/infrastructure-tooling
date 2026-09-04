@@ -13,13 +13,13 @@ resource "azurerm_storage_account" "cloud_shell" {
   #checkov:skip=CKV2_AZURE_40: "Ensure storage account is not configured with Shared Key authorization"
   #checkov:skip=CKV2_AZURE_47: "Ensure storage account is configured without blob anonymous access"
   #checkov:skip=CKV2_AZURE_33: "Ensure storage account is configured with private endpoint"
-  name                     = "pinsstsharedshelluks"
-  resource_group_name      = azurerm_resource_group.tooling.name
-  location                 = azurerm_resource_group.tooling.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  min_tls_version          = "TLS1_2"
-  allow_nested_items_to_be_public  = true
+  name                            = "pinsstsharedshelluks"
+  resource_group_name             = azurerm_resource_group.tooling.name
+  location                        = azurerm_resource_group.tooling.location
+  account_tier                    = "Standard"
+  account_replication_type        = "LRS"
+  min_tls_version                 = "TLS1_2"
+  allow_nested_items_to_be_public = true
 
   tags = merge(local.tags, {
     ms-resource-usage = "azure-cloud-shell"

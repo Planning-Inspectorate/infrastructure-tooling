@@ -12,13 +12,13 @@ resource "azurerm_storage_account" "crown_development_terraform_storage" {
   #checkov:skip=CKV2_AZURE_40: "Ensure storage account is not configured with Shared Key authorization"
   #checkov:skip=CKV2_AZURE_47: "Ensure storage account is configured without blob anonymous access"
   #checkov:skip=CKV2_AZURE_33: "Ensure storage account is configured with private endpoint"
-  name                     = "pinssttfstateukscrowndev"
-  resource_group_name      = local.shared_terraform_resource_group
-  location                 = azurerm_resource_group.tooling.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  min_tls_version          = "TLS1_2"
-  allow_nested_items_to_be_public  = true
+  name                            = "pinssttfstateukscrowndev"
+  resource_group_name             = local.shared_terraform_resource_group
+  location                        = azurerm_resource_group.tooling.location
+  account_tier                    = "Standard"
+  account_replication_type        = "LRS"
+  min_tls_version                 = "TLS1_2"
+  allow_nested_items_to_be_public = true
 
   tags = local.tags
 }
