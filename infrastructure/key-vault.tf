@@ -10,6 +10,7 @@ resource "azurerm_key_vault" "tooling_key_vault" {
   purge_protection_enabled    = true
   soft_delete_retention_days  = 7
   tenant_id                   = data.azurerm_client_config.current.tenant_id
+  rbac_authorization_enabled  = false
 
   sku_name = "standard"
 

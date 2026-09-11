@@ -13,8 +13,9 @@ resource "azurerm_container_registry" "acr" {
   sku                 = "Premium"
 
   georeplications {
-    location = module.azure_region_secondary.location
-    tags     = merge(local.tags, { Region = var.secondary_region })
+    location                        = module.azure_region_secondary.location
+    global_endpoint_routing_enabled = false
+    tags                            = merge(local.tags, { Region = var.secondary_region })
   }
 
   tags = local.tags

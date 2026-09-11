@@ -19,6 +19,7 @@ resource "azurerm_storage_account" "template_app_terraform_storage" {
   account_replication_type         = "LRS"
   min_tls_version                  = "TLS1_2"
   cross_tenant_replication_enabled = true
+  allow_nested_items_to_be_public  = true
 
   tags = local.tags
 }
@@ -28,7 +29,7 @@ resource "azurerm_storage_container" "template_app_terraform_storage_containers"
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "terraform-state-devops-template-${each.key}"
-  storage_account_name  = azurerm_storage_account.template_app_terraform_storage.name
+  storage_account_id    = azurerm_storage_account.template_app_terraform_storage.id
   container_access_type = "private"
 }
 
@@ -37,6 +38,6 @@ resource "azurerm_storage_container" "template_packer_terraform_storage_containe
 
   #checkov:skip=CKV2_AZURE_21: logging not required
   name                  = "terraform-state-devops-template-packer-${each.key}"
-  storage_account_name  = azurerm_storage_account.template_app_terraform_storage.name
+  storage_account_id    = azurerm_storage_account.template_app_terraform_storage.id
   container_access_type = "private"
 }
