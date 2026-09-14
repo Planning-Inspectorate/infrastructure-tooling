@@ -19,12 +19,18 @@ sudo apt-get install -y --no-install-recommends \
   gnupg \
   jq \
   libasound2 \
+  libbz2-dev \
+  libffi-dev \
   libgbm-dev \
   libgconf-2-4 \
   libgtk2.0-0 \
   libgtk-3-0 \
+  liblzma-dev \
   libnotify-dev \
   libnss3 \
+  libreadline-dev \
+  libsqlite3-dev \
+  libssl-dev \
   libxss1 \
   libxtst6 \
   lsb-release \
@@ -32,7 +38,9 @@ sudo apt-get install -y --no-install-recommends \
   unzip \
   xauth \
   xvfb \
-  zip
+  xz-utils \
+  zip \
+  zlib1g-dev
 
 # Git
 sudo apt-get install -y --no-install-recommends \
@@ -79,11 +87,8 @@ pwsh -Command "Install-Module -Name Az -RequiredVersion 16.0.0 -Force -AllowClob
 
 # Terraform
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
-
-# Terraform
-curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get install -y terraform=1.15.7-1 # the hyphen is needed for the repo
+sudo apt-get install -y terraform=1.16.1-1 # the hyphen is needed for the repo
 
 # Terragrunt 0.55.1
 sudo curl -s -L "https://github.com/gruntwork-io/terragrunt/releases/download/v0.55.1/terragrunt_linux_amd64" -o /usr/bin/terragrunt && chmod 777 /usr/bin/terragrunt
@@ -117,10 +122,28 @@ nvm install 20
 nvm alias default 22
 nvm use default
 
+# pyenv installation
+curl -fsSL https://pyenv.run | bash
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - bash)"
+
+pyenv install 3.11
+pyenv install 3.12
+pyenv install 3.13
+pyenv install 3.14
+pyenv global 3.14
+
 # Azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 sudo apt-get update; \
   sudo apt-get install -y apt-transport-https
+
+## fixing pyenv  affect waagent runtime
+sudo apt-get install -y walinuxagent
+unset PYENV_VERSION || true
+export PATH="/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 
 /usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync
