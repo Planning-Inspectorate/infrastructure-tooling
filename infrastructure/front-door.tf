@@ -38,14 +38,14 @@ resource "azurerm_monitor_diagnostic_setting" "web_front_door" {
     category = "FrontdoorWebApplicationFirewallLog"
   }
 
-  metric {
+  enabled_metric {
     category = "AllMetrics"
   }
 
   lifecycle {
     ignore_changes = [
       enabled_log,
-      metric
+      enabled_metric
     ]
   }
 }
