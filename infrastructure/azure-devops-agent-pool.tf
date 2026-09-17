@@ -27,9 +27,9 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
   }
 
   network_interface {
-    enable_accelerated_networking = true
-    name                          = each.value["nic_name"]
-    primary                       = true
+    accelerated_networking_enabled = true
+    name                           = each.value["nic_name"]
+    primary                        = true
 
     ip_configuration {
       name      = "default"
