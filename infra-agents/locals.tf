@@ -20,7 +20,7 @@ locals {
   tags = {
     CostCentre  = "90117"
     CreatedBy   = "terraform"
-    Region      = "uks"# var.primary_region # Only ever in one region, hard code it as "uks"?
+    Region      = "uks" # var.primary_region # Only ever in one region, hard code it as "uks"?
     ServiceName = "shared"
   }
 }
