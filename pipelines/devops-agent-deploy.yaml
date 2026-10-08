@@ -1,3 +1,6 @@
+pr: none
+trigger: none
+
 parameters:
   - name: environment
     type: string
@@ -6,8 +9,6 @@ parameters:
     type: boolean
     default: false
 
-pr: none
-trigger: none
 
 variables:
   - group: Terraform ${{ parameters.environment }}
@@ -24,6 +25,21 @@ variables:
 pool:
   name: pins-odt-agent-pool
 
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      endpoint: Planning-Inspectorate
+      name: Planning-Inspectorate/common-pipeline-templates
+      ref: refs/tags/release/3.30.0
+
+extends:
+  template: pipelines/terraform_checks.yml@templates
+  workingDirectory: $(Build.Repository.LocalPath)/infrastructure-agents
+  tflintConfigPath: $(Build.Repository.LocalPath)/.tflint.hcl
+  pool:
+    name: $(agentPoolGroupName)
+
 stages:
   - stage: Build
     displayName: Image Build ${{ parameters.environment }}
@@ -35,9 +51,9 @@ stages:
       - checkout: self
         displayName: 'Checkout'
 
-      - template: pipelines/steps/azure-login.yaml
+      - template: pipelines/steps/azure-login.yaml@templates
 
-      - template: build-azure-agents-image
+      - template: pipelines/build-azure-agents-image.yml@templates
         parameters:
           location: ${{ variables.location }}
           resourceGroupName: ${{ variables.agentPoolGroupName }}
@@ -53,7 +69,7 @@ stages:
       - checkout: self
         displayName: 'Checkout'
 
-      - template: pipelines/steps/azure-login.yaml
+      - template: pipelines/steps/azure-login.yaml@templates
 
       - template: steps/terraform-init.yaml
         parameters:
@@ -103,7 +119,7 @@ stages:
             - checkout: self
               displayName: 'Checkout'
 
-            - template: pipelines/steps/azure-login.yaml
+            - template: pipelines/steps/azure-login.yaml@templates
 
             - download: current
               artifact: terraform-plan-${{ lower(variables.environment) }}
