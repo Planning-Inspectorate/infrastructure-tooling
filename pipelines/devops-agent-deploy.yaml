@@ -46,7 +46,7 @@ stages:
 
       - template: steps/azure_auth.yml@templates
 
-      - template: pipelines/build-azure-agents-image.yml@templates
+      - template: build-azure-agents-image.yml@templates
         parameters:
           location: ${{ variables.location }}
           resourceGroupName: ${{ variables.agentPoolGroupName }}
