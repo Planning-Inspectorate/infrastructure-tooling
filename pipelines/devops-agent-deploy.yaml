@@ -1,22 +1,14 @@
-pr: none
-trigger: none
-
-extends:
-  template: stages/wrapper_cd.yml@templates
-  parameters:
-    environments:
-    - name: Tooling
-    - name: buildImage
-      type: boolean
-      default: false
-    pool:
-      vmImage: ubuntu-22.04
+parameters:
+  - name: environment
+    type: string
+    default: tooling
+  - name: buildImage
+    type: boolean
+    default: false
 
 variables:
   - group: Terraform ${{ parameters.environment }}
   - name: agentPoolGroupName
-  # - name: armServiceConnectionName
-  #   value: ${{ format('Azure DevOps Pipelines - ODW {0} - Infrastructure', upper(parameters.environment)) }}
   - name: artifactName
     value: terraform-plan
   - name: outputsFileName
@@ -24,25 +16,11 @@ variables:
   - name: planFileName
     value: tfplan
 
-# pool:
-#   name: pins-odt-agent-pool
-
-resources:
-  repositories:
-    - repository: templates
-      type: github
-      endpoint: Planning-Inspectorate
-      name: Planning-Inspectorate/common-pipeline-templates
-      ref: refs/tags/release/3.30.0
-
-stages:
-  - stage: Build
-    displayName: Image Build ${{ parameters.environment }}
+jobs:
+  - job: Build
+    displayName: Image Build
     condition: eq('${{ parameters.buildImage }}', true)
-    jobs:
-    - job: Build
-      displayName: Image Build
-      steps:
+    steps:
       - checkout: self
         displayName: 'Checkout'
 
@@ -54,29 +32,21 @@ stages:
           resourceGroupName: ${{ variables.agentPoolGroupName }}
           workingDirectory: infrastructure-agents/configuration
 
-  - stage: Pool_Plan
+  - job: Pool_Plan
+    displayName: Agent Pool Plan
     dependsOn: Build
-    displayName: Agent Pool Plan ${{ parameters.environment }}
-    jobs:
-    - job: Pool_Plan
-      displayName: Agent Pool Plan
-      steps:
+    steps:
       - checkout: self
         displayName: 'Checkout'
 
       - template: steps/azure_auth.yml@templates
 
-      - template: steps/terraform-init.yaml
-        parameters:
-          environment: ${{ variables.environment }}
-          workingDirectory: infrastructure-agents
-
       - script: |
           echo "Planning Terraform deployment..."
-          echo "##[command]terraform plan -var-file=./environments/${{ variables.environment }}.tfvars \
+          echo "##[command]terraform plan -var-file=./environments/${{ parameters.environment }}.tfvars \
           -input=false -out=${{ variables.planFileName }}"
           terraform plan \
-            -var-file=./environments/${{ variables.environment }}.tfvars \
+            -var-file=./environments/${{ parameters.environment }}.tfvars \
             -input=false \
             -out=${{ variables.planFileName }}
         displayName: 'Terraform Plan'
@@ -97,38 +67,32 @@ stages:
             **/**
           TargetFolder: $(Build.ArtifactStagingDirectory)
       - publish: $(Build.ArtifactStagingDirectory)
-        artifact: terraform-plan-${{ lower(variables.environment) }}
+        artifact: terraform-plan-${{ lower(parameters.environment) }}
         displayName: Publish plan artifact
 
-  - stage: Pool_Apply
+  - deployment: Pool_Apply
+    displayName: Agent Pool Apply
     dependsOn: Pool_Plan
-    displayName: Agent Pool Apply ${{ parameters.environment }}
-    jobs:
-    - deployment: Pool_Apply
-      displayName: Agent Pool Apply
-      environment: ${{ parameters.environment }}
-      strategy:
-        runOnce:
-          deploy:
-            steps:
+    environment: ${{ parameters.environment }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
             - checkout: self
               displayName: 'Checkout'
 
             - template: steps/azure_auth.yml@templates
 
             - download: current
-              artifact: terraform-plan-${{ lower(variables.environment) }}
+              artifact: terraform-plan-${{ lower(parameters.environment) }}
             - task: CopyFiles@2
               inputs:
-                sourceFolder: $(Pipeline.Workspace)/terraform-plan-${{ lower(variables.environment) }}
+                sourceFolder: $(Pipeline.Workspace)/terraform-plan-${{ lower(parameters.environment) }}
                 contents: '**'
                 targetFolder: infrastructure-agents
             - script: |
                 /bin/chmod -R +x .
               workingDirectory: infrastructure-agents
-              # set file perms so that terraform plugins can be executed
-              # see https://learn.microsoft.com/en-us/azure/devops/pipelines/artifacts/build-artifacts?view=azure-devops&tabs=yaml#tips
-              # "Build artifacts are stored on a Windows filesystem, which causes all UNIX permissions to be lost, including the execution bit."
               displayName: Set File Perms
 
             - script: |
