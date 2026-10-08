@@ -39,25 +39,3 @@ resource "azurerm_key_vault_access_policy" "admins" {
   secret_permissions      = ["Get", "List", "Set"]
   storage_permissions     = ["Get", "List", "Set"]
 }
-
-resource "random_password" "agents_admin_password" {
-  length  = 20
-  special = true
-}
-
-resource "azurerm_key_vault_secret" "agents_admin_password" {
-  #checkov:skip=CKV_AZURE_41: TODO: Secret rotation
-  content_type = "text/plain"
-  key_vault_id = azurerm_key_vault.tooling_key_vault.id
-  name         = "agents-admin-password"
-  value        = random_password.agents_admin_password.result
-
-  tags = local.tags
-
-  lifecycle {
-    ignore_changes = [
-      value,
-      expiration_date
-    ]
-  }
-}
