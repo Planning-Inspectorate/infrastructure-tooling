@@ -1,7 +1,8 @@
 parameters:
   - name: environment
+    displayName: Environment
     type: string
-    default: tooling
+    default: Tooling
   - name: buildImage
     type: boolean
     default: false
@@ -10,108 +11,135 @@ resources:
   repositories:
     - repository: templates
       type: github
-      endpoint: Planning-Inspectorate
       name: Planning-Inspectorate/common-pipeline-templates
+      endpoint: Planning-Inspectorate
       ref: refs/tags/release/3.27.0
 
 variables:
   - group: Terraform ${{ parameters.environment }}
   - name: agentPoolGroupName
+    value: $(AGENT_POOL_GROUP_NAME)
+  - name: armServiceConnectionName
+    value: Azure DevOps Pipelines - Tooling - Infrastructure
   - name: artifactName
     value: terraform-plan
+  - name: environment
+    value: ${{ lower(parameters.environment) }}
+  - name: location
+    value: "UK South"
   - name: outputsFileName
     value: tfoutputs.json
   - name: planFileName
     value: tfplan
 
-jobs:
-  - job: Build
-    displayName: Image Build
-    condition: eq('${{ parameters.buildImage }}', true)
-    steps:
-      - checkout: self
-        displayName: 'Checkout'
+pr: none
+trigger: none
 
-      - template: steps/azure_auth.yml@templates
+pool:
+  vmImage: ubuntu-22.04
 
-      - template: steps/build-azure-agents-image.yml
-        parameters:
-          location: ${{ variables.location }} 
-          resourceGroupName: ${{ variables.agentPoolGroupName }}
-          workingDirectory: infrastructure-agents/configuration
+stages:
+  - stage: Build
+    displayName: Image Build ${{ parameters.environment }}
+    jobs:
+      - job: Build
+        displayName: Image Build
+        condition: eq('${{ parameters.buildImage }}', true)
+        steps:
+          - checkout: self
+            displayName: 'Checkout'
 
-  - job: Pool_Plan
-    displayName: Agent Pool Plan
+          - template: steps/azure_auth.yml@templates
+
+          - template: steps/build-azure-agents-image.yml
+            parameters:
+              location: ${{ variables.location }}
+              resourceGroupName: ${{ variables.agentPoolGroupName }}
+              workingDirectory: infrastructure-agents/configuration
+
+  - stage: Pool_Plan
     dependsOn: Build
-    steps:
-      - checkout: self
-        displayName: 'Checkout'
+    displayName: Agent Pool Plan ${{ parameters.environment }}
+    jobs:
+      - job: Pool_Plan
+        displayName: Agent Pool Plan
+        steps:
+          - checkout: self
+            displayName: 'Checkout'
 
-      - template: steps/azure_auth.yml@templates
+          - template: steps/azure_auth.yml@templates
 
-      - script: |
-          echo "Planning Terraform deployment..."
-          echo "##[command]terraform plan -var-file=./environments/${{ parameters.environment }}.tfvars \
-          -input=false -out=${{ variables.planFileName }}"
-          terraform plan \
-            -var-file=./environments/${{ parameters.environment }}.tfvars \
-            -input=false \
-            -out=${{ variables.planFileName }}
-        displayName: 'Terraform Plan'
-        workingDirectory: infrastructure-agents
-        env:
-          ARM_CLIENT_ID: $(AZURE_SERVICE_PRINCIPAL_ID)
-          ARM_CLIENT_SECRET: $(AZURE_SERVICE_PRINCIPAL_SECRET)
-          ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
-          ARM_TENANT_ID: $(AZURE_TENANT_ID)
+          - template: steps/terraform-init.yaml
+            parameters:
+              environment: ${{ variables.environment }}
+              workingDirectory: infrastructure-agents
 
-      - task: CopyFiles@2
-        displayName: Create plan artifact
-        inputs:
-          SourceFolder: infrastructure-agents
-          Contents: |
-            !.git
-            !**/.terraform/**
-            **/**
-          TargetFolder: $(Build.ArtifactStagingDirectory)
-      - publish: $(Build.ArtifactStagingDirectory)
-        artifact: terraform-plan-${{ lower(parameters.environment) }}
-        displayName: Publish plan artifact
+          - script: |
+              echo "Planning Terraform deployment..."
+              echo "##[command]terraform plan -var-file=./environments/${{ variables.environment }}.tfvars \
+              -input=false -out=${{ variables.planFileName }}"
+              terraform plan \
+                -var-file=./environments/${{ variables.environment }}.tfvars \
+                -input=false \
+                -out=${{ variables.planFileName }}
+            displayName: 'Terraform Plan'
+            workingDirectory: infrastructure-agents
+            env:
+              ARM_CLIENT_ID: $(AZURE_SERVICE_PRINCIPAL_ID)
+              ARM_CLIENT_SECRET: $(AZURE_SERVICE_PRINCIPAL_SECRET)
+              ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(AZURE_TENANT_ID)
 
-  - deployment: Pool_Apply
-    displayName: Agent Pool Apply
+          - task: CopyFiles@2
+            displayName: Create plan artifact
+            inputs:
+              SourceFolder: infrastructure-agents
+              Contents: |
+                !.git
+                !**/.terraform/**
+                **/**
+              TargetFolder: $(Build.ArtifactStagingDirectory)
+          - publish: $(Build.ArtifactStagingDirectory)
+            artifact: terraform-plan-${{ lower(variables.environment) }}
+            displayName: Publish plan artifact
+
+  - stage: Pool_Apply
     dependsOn: Pool_Plan
-    environment: ${{ parameters.environment }}
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-            - checkout: self
-              displayName: 'Checkout'
+    displayName: Agent Pool Apply ${{ parameters.environment }}
+    jobs:
+      - deployment: Pool_Apply
+        displayName: Agent Pool Apply
+        environment: ${{ parameters.environment }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  displayName: 'Checkout'
 
-            - template: steps/azure_auth.yml@templates
+                - template: steps/azure_auth.yml@templates
 
-            - download: current
-              artifact: terraform-plan-${{ lower(parameters.environment) }}
-            - task: CopyFiles@2
-              inputs:
-                sourceFolder: $(Pipeline.Workspace)/terraform-plan-${{ lower(parameters.environment) }}
-                contents: '**'
-                targetFolder: infrastructure-agents
-            - script: |
-                /bin/chmod -R +x .
-              workingDirectory: infrastructure-agents
-              displayName: Set File Perms
+                - download: current
+                  artifact: terraform-plan-${{ lower(variables.environment) }}
+                - task: CopyFiles@2
+                  inputs:
+                    sourceFolder: $(Pipeline.Workspace)/terraform-plan-${{ lower(variables.environment) }}
+                    contents: '**'
+                    targetFolder: infrastructure-agents
+                - script: |
+                    /bin/chmod -R +x .
+                  workingDirectory: infrastructure-agents
+                  displayName: Set File Perms
 
-            - script: |
-                echo "Deploying Terraform..."
-                echo "##[command]terraform apply -input=false ${{ variables.planFileName }}"
-                terraform apply -auto-approve -input=false ${{ variables.planFileName }}
-              displayName: 'Terraform Apply'
-              workingDirectory: infrastructure-agents
-              env:
-                ARM_CLIENT_ID: $(AZURE_SERVICE_PRINCIPAL_ID)
-                ARM_CLIENT_SECRET: $(AZURE_SERVICE_PRINCIPAL_SECRET)
-                ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
-                ARM_TENANT_ID: $(AZURE_TENANT_ID)
-                TF_VAR_system_asset_owner: ${{ variables.TF_VAR_system_asset_owner }}
+                - script: |
+                    echo "Deploying Terraform..."
+                    echo "##[command]terraform apply -input=false ${{ variables.planFileName }}"
+                    terraform apply -auto-approve -input=false ${{ variables.planFileName }}
+                  displayName: 'Terraform Apply'
+                  workingDirectory: infrastructure-agents
+                  env:
+                    ARM_CLIENT_ID: $(AZURE_SERVICE_PRINCIPAL_ID)
+                    ARM_CLIENT_SECRET: $(AZURE_SERVICE_PRINCIPAL_SECRET)
+                    ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+                    ARM_TENANT_ID: $(AZURE_TENANT_ID)
+                    TF_VAR_system_asset_owner: ${{ variables.TF_VAR_system_asset_owner }}
