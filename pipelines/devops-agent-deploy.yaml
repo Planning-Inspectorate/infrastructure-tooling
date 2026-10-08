@@ -6,6 +6,14 @@ parameters:
     type: boolean
     default: false
 
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      endpoint: Planning-Inspectorate
+      name: Planning-Inspectorate/common-pipeline-templates
+      ref: refs/tags/release/3.27.0
+
 variables:
   - group: Terraform ${{ parameters.environment }}
   - name: agentPoolGroupName
@@ -28,7 +36,7 @@ jobs:
 
       - template: steps/build-azure-agents-image.yml
         parameters:
-          location: ${{ variables.location }}
+          location: ${{ variables.location }} 
           resourceGroupName: ${{ variables.agentPoolGroupName }}
           workingDirectory: infrastructure-agents/configuration
 
