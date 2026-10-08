@@ -1,0 +1,131 @@
+parameters:
+  - name: buildImage
+    type: boolean
+    default: false
+
+pr: none
+trigger: none
+
+variables:
+  - group: Terraform ${{ parameters.environment }}
+  - name: agentPoolGroupName
+  # - name: armServiceConnectionName
+  #   value: ${{ format('Azure DevOps Pipelines - ODW {0} - Infrastructure', upper(parameters.environment)) }}
+  - name: artifactName
+    value: terraform-plan
+  - name: outputsFileName
+    value: tfoutputs.json
+  - name: planFileName
+    value: tfplan
+
+pool:
+  name: pins-odt-agent-pool
+
+stages:
+  - stage: Build
+    displayName: Image Build ${{ parameters.environment }}
+    condition: eq('${{ parameters.buildImage }}', true)
+    jobs:
+    - job: Build
+      displayName: Image Build
+      steps:
+      - checkout: self
+        displayName: 'Checkout'
+
+      - template: pipelines/steps/azure-login.yaml
+
+      - template: build-azure-agents-image
+        parameters:
+          location: ${{ variables.location }}
+          resourceGroupName: ${{ variables.agentPoolGroupName }}
+          workingDirectory: infrastructure-agents/configuration
+
+  - stage: Pool_Plan
+    dependsOn: Build
+    displayName: Agent Pool Plan ${{ parameters.environment }}
+    jobs:
+    - job: Pool_Plan
+      displayName: Agent Pool Plan
+      steps:
+      - checkout: self
+        displayName: 'Checkout'
+
+      - template: pipelines/steps/azure-login.yaml
+
+      - template: steps/terraform-init.yaml
+        parameters:
+          environment: ${{ variables.environment }}
+          workingDirectory: infrastructure-agents
+
+      - script: |
+          echo "Planning Terraform deployment..."
+          echo "##[command]terraform plan -var-file=./environments/${{ variables.environment }}.tfvars \
+          -input=false -out=${{ variables.planFileName }}"
+          terraform plan \
+            -var-file=./environments/${{ variables.environment }}.tfvars \
+            -input=false \
+            -out=${{ variables.planFileName }}
+        displayName: 'Terraform Plan'
+        workingDirectory: infrastructure-agents
+        env:
+          ARM_CLIENT_ID: $(AZURE_SERVICE_PRINCIPAL_ID)
+          ARM_CLIENT_SECRET: $(AZURE_SERVICE_PRINCIPAL_SECRET)
+          ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+          ARM_TENANT_ID: $(AZURE_TENANT_ID)
+
+      - task: CopyFiles@2
+        displayName: Create plan artifact
+        inputs:
+          SourceFolder: infrastructure-agents
+          Contents: |
+            !.git
+            !**/.terraform/**
+            **/**
+          TargetFolder: $(Build.ArtifactStagingDirectory)
+      - publish: $(Build.ArtifactStagingDirectory)
+        artifact: terraform-plan-${{ lower(variables.environment) }}
+        displayName: Publish plan artifact
+
+  - stage: Pool_Apply
+    dependsOn: Pool_Plan
+    displayName: Agent Pool Apply ${{ parameters.environment }}
+    jobs:
+    - deployment: Pool_Apply
+      displayName: Agent Pool Apply
+      environment: ${{ parameters.environment }}
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - checkout: self
+              displayName: 'Checkout'
+
+            - template: pipelines/steps/azure-login.yaml
+
+            - download: current
+              artifact: terraform-plan-${{ lower(variables.environment) }}
+            - task: CopyFiles@2
+              inputs:
+                sourceFolder: $(Pipeline.Workspace)/terraform-plan-${{ lower(variables.environment) }}
+                contents: '**'
+                targetFolder: infrastructure-agents
+            - script: |
+                /bin/chmod -R +x .
+              workingDirectory: infrastructure-agents
+              # set file perms so that terraform plugins can be executed
+              # see https://learn.microsoft.com/en-us/azure/devops/pipelines/artifacts/build-artifacts?view=azure-devops&tabs=yaml#tips
+              # "Build artifacts are stored on a Windows filesystem, which causes all UNIX permissions to be lost, including the execution bit."
+              displayName: Set File Perms
+
+            - script: |
+                echo "Deploying Terraform..."
+                echo "##[command]terraform apply -input=false ${{ variables.planFileName }}"
+                terraform apply -auto-approve -input=false ${{ variables.planFileName }}
+              displayName: 'Terraform Apply'
+              workingDirectory: infrastructure-agents
+              env:
+                ARM_CLIENT_ID: $(AZURE_SERVICE_PRINCIPAL_ID)
+                ARM_CLIENT_SECRET: $(AZURE_SERVICE_PRINCIPAL_SECRET)
+                ARM_SUBSCRIPTION_ID: $(SUBSCRIPTION_ID)
+                ARM_TENANT_ID: $(AZURE_TENANT_ID)
+                TF_VAR_system_asset_owner: ${{ variables.TF_VAR_system_asset_owner }}
