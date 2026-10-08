@@ -4,12 +4,13 @@ trigger: none
 extends:
   template: stages/wrapper_cd.yml@templates
   parameters:
+    environments:
     - name: Tooling
     - name: buildImage
       type: boolean
       default: false
-  pool:
-    vmImage: ubuntu-22.04
+    pool:
+      vmImage: ubuntu-22.04
 
 variables:
   - group: Terraform ${{ parameters.environment }}
