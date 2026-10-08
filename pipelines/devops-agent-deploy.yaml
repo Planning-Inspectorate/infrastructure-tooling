@@ -35,10 +35,11 @@ resources:
 
 extends:
   template: pipelines/terraform_checks.yml@templates
-  workingDirectory: $(Build.Repository.LocalPath)/infrastructure-agents
-  tflintConfigPath: $(Build.Repository.LocalPath)/.tflint.hcl
-  pool:
-    name: $(agentPoolGroupName)
+  parameters:
+    workingDirectory: $(Build.Repository.LocalPath)/infrastructure-agents
+    tflintConfigPath: $(Build.Repository.LocalPath)/.tflint.hcl
+    pool:
+      name: $(agentPoolGroupName)
 
 stages:
   - stage: Build
