@@ -1,14 +1,17 @@
 pr: none
 trigger: none
 
-parameters:
-  - name: environment
-    type: string
-    default: tooling
-  - name: buildImage
-    type: boolean
-    default: false
-
+extends:
+  template: stages/wrapper_cd.yml@templates
+  parameters:
+    - name: environment
+      type: string
+      default: tooling
+    - name: buildImage
+      type: boolean
+      default: false
+  pool:
+    vmImage: ubuntu-22.04
 
 variables:
   - group: Terraform ${{ parameters.environment }}
@@ -22,8 +25,8 @@ variables:
   - name: planFileName
     value: tfplan
 
-pool:
-  name: pins-odt-agent-pool
+# pool:
+#   name: pins-odt-agent-pool
 
 resources:
   repositories:
