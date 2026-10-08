@@ -4,9 +4,7 @@ trigger: none
 extends:
   template: stages/wrapper_cd.yml@templates
   parameters:
-    - name: environment
-      type: string
-      default: tooling
+    - name: Tooling
     - name: buildImage
       type: boolean
       default: false
