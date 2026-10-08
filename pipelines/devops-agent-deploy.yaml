@@ -44,7 +44,7 @@ stages:
       - checkout: self
         displayName: 'Checkout'
 
-      - template: pipelines/steps/azure-login.yaml@templates
+      - template: steps/azure_auth.yml@templates
 
       - template: pipelines/build-azure-agents-image.yml@templates
         parameters:
@@ -62,7 +62,7 @@ stages:
       - checkout: self
         displayName: 'Checkout'
 
-      - template: pipelines/steps/azure-login.yaml@templates
+      - template: steps/azure_auth.yml@templates
 
       - template: steps/terraform-init.yaml
         parameters:
@@ -112,7 +112,7 @@ stages:
             - checkout: self
               displayName: 'Checkout'
 
-            - template: pipelines/steps/azure-login.yaml@templates
+            - template: steps/azure_auth.yml@templates
 
             - download: current
               artifact: terraform-plan-${{ lower(variables.environment) }}
