@@ -33,8 +33,6 @@ resources:
       name: Planning-Inspectorate/common-pipeline-templates
       ref: refs/tags/release/3.30.0
 
-extens
-
 stages:
   - stage: Build
     displayName: Image Build ${{ parameters.environment }}
