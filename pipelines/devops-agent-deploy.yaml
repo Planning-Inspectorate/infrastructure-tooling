@@ -33,14 +33,6 @@ resources:
       name: Planning-Inspectorate/common-pipeline-templates
       ref: refs/tags/release/3.30.0
 
-extends:
-  template: pipelines/terraform_checks.yml@templates
-  parameters:
-    workingDirectory: $(Build.Repository.LocalPath)/infrastructure-agents
-    tflintConfigPath: $(Build.Repository.LocalPath)/.tflint.hcl
-    pool:
-      name: $(agentPoolGroupName)
-
 stages:
   - stage: Build
     displayName: Image Build ${{ parameters.environment }}
