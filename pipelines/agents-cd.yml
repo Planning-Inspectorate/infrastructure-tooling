@@ -10,9 +10,6 @@ resources:
       name: Planning-Inspectorate/common-pipeline-templates
       ref: refs/tags/release/3.30.0
 
-variables:
-  - group: tooling_pipelines
-
 extends:
   template: pipelines/terraform_plan_apply.yml@templates
   parameters:
