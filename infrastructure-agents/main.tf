@@ -1,31 +1,15 @@
-resource "azurerm_resource_group" "tooling" {
-  name     = "pins-rg-${local.resource_suffix}"
-  location = var.location
-  tags     = local.tags
-}
-
-resource "azurerm_resource_group" "common" {
-  name     = "pins-rg-common-tooling"
-  location = var.location
-  tags     = local.tags
-}
-
 resource "azurerm_subnet" "azure_agents" {
   #checkov:skip=CKV2_AZURE_31: "Ensure VNET subnet is configured with a Network Security Group (NSG)"
   name                              = "pins-snet-azure-agents-${local.resource_suffix}"
-  resource_group_name               = azurerm_resource_group.tooling.name
-  virtual_network_name              = azurerm_virtual_network.tooling.name
+  resource_group_name               = data.azurerm_resource_group.tooling.name
+  virtual_network_name              = data.azurerm_virtual_network.tooling.name
   address_prefixes                  = ["10.10.0.0/24"] # 256 IPs
   private_endpoint_network_policies = "Enabled"
 }
 
-resource "azurerm_virtual_network" "tooling" {
-  name                = "pins-vnet-${local.resource_suffix}"
-  resource_group_name = azurerm_resource_group.tooling.name
-  location            = azurerm_resource_group.tooling.location
-  address_space       = ["10.10.0.0/16"] # 65536 IPs
-
-  tags = local.tags
+variable "subscription_id" {
+  description = "Tooling subscription ID, used to build the resource IDs in imports.tf"
+  type        = string
 }
 
 variable "location" {

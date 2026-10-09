@@ -7,8 +7,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "azure_devops_agent_pool" {
 
   name                = each.value["name"]
   sku                 = each.value["sku"]
-  resource_group_name = azurerm_resource_group.tooling.name
-  location            = azurerm_resource_group.tooling.location
+  resource_group_name = data.azurerm_resource_group.tooling.name
+  location            = data.azurerm_resource_group.tooling.location
   instances           = 2
 
   overprovision          = false

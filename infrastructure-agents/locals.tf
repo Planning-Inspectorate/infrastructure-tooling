@@ -15,7 +15,7 @@ locals {
   }
   # This should be OK removing the module referencing and instead hard code. 
   # The suffix we keep as mulitple places reference it, we could hard code those too.
-  resource_suffix = "shared-uks"
+  resource_suffix = "shared-tooling-uks"
 
   tags = {
     CostCentre  = "90117"
