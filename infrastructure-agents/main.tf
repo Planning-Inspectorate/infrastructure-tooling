@@ -7,6 +7,12 @@ resource "azurerm_subnet" "azure_agents" {
   private_endpoint_network_policies = "Enabled"
 }
 
+variable "environment" {
+  description = "The environment for the agents"
+  type        = string
+  default     = "agents"
+}
+
 variable "subscription_id" {
   description = "Tooling subscription ID, used to build the resource IDs in imports.tf"
   type        = string

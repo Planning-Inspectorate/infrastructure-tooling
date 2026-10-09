@@ -1,0 +1,34 @@
+trigger: none
+
+pr: none
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      endpoint: Planning-Inspectorate
+      name: Planning-Inspectorate/common-pipeline-templates
+      ref: refs/tags/release/3.30.0
+
+variables:
+  - group: tooling_pipelines
+
+extends:
+  template: pipelines/terraform_plan_apply.yml@templates
+  parameters:
+    # state blob is named from the environment: agents.tfstate
+    environments:
+      - name: -agents
+    automaticDeploymentEnvironments:
+      - name: -agents
+    poolNameFormatString: pins-odt-agent-pool
+    serviceConnectionCustomFormatString: Azure DevOps Pipelines - Core Services - Tooling
+    storageAccountName: pinsstsharedtfstateuks
+    resourceGroupName: pins-rg-shared-terraform-uks
+    containerFormatString: terraformstate
+    workingDirectory: $(Build.Repository.LocalPath)/infrastructure-agents
+    extraEnvironmentVariables:
+      - name: ARM_SUBSCRIPTION_ID
+        value: $(TOOLING_SUBSCRIPTION_ID)
+      - name: TF_VAR_subscription_id
+        value: $(TOOLING_SUBSCRIPTION_ID)

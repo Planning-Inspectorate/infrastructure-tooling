@@ -84,6 +84,7 @@ stages:
             displayName: Terraform Plan
             workingDirectory: infrastructure-agents
             env:
+              TF_VAR_subscription_id: $(TOOLING_SUBSCRIPTION_ID)
               ARM_CLIENT_ID: $(AZURE_SERVICE_PRINCIPAL_ID)
               ARM_CLIENT_SECRET: $(AZURE_SERVICE_PRINCIPAL_SECRET)
               ARM_SUBSCRIPTION_ID: $(TOOLING_SUBSCRIPTION_ID)
