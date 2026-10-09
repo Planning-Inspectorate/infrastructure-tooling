@@ -1,0 +1,146 @@
+parameters:
+  - name: buildImage
+    displayName: Build agent image before deploying
+    type: boolean
+    default: false
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: Planning-Inspectorate/common-pipeline-templates
+      endpoint: Planning-Inspectorate
+      ref: refs/tags/release/3.30.0
+
+variables:
+  - group: tooling_pipelines
+  - name: planFileName
+    value: tfplan
+  - name: toolingResourceGroupName
+    value: pins-rg-shared-tooling-uks
+
+pr: none
+trigger: none
+
+pool:
+  vmImage: ubuntu-22.04
+
+stages:
+  - ${{ if eq(parameters.buildImage, true) }}:
+      - stage: Build
+        displayName: Image Build
+        jobs:
+          - job: Build
+            displayName: Init and Build and Save Azure Scale Set Image
+            steps:
+              - checkout: self
+                displayName: Checkout
+
+              - template: steps/azure_auth.yml@templates
+                parameters:
+                  subscriptionId: $(TOOLING_SUBSCRIPTION_ID)
+
+              - script: packer init .
+                displayName: Packer init
+                workingDirectory: $(Build.Repository.LocalPath)/infrastructure-agents/configuration
+
+              - script: packer build .
+                displayName: Packer Build
+                workingDirectory: $(Build.Repository.LocalPath)/infrastructure-agents/configuration
+                env:
+                  PKR_VAR_client_id: $(AZURE_SERVICE_PRINCIPAL_ID)
+                  PKR_VAR_client_secret: $(AZURE_SERVICE_PRINCIPAL_SECRET)
+                  PKR_VAR_subscription_id: $(TOOLING_SUBSCRIPTION_ID)
+                  PKR_VAR_tenant_id: $(AZURE_TENANT_ID)
+                  PKR_VAR_tooling_resource_group_name: $(toolingResourceGroupName)
+
+  - stage: Pool_Plan
+    ${{ if eq(parameters.buildImage, true) }}:
+      dependsOn: Build
+    ${{ if eq(parameters.buildImage, false) }}:
+      dependsOn: []
+    displayName: Agent Pool Plan
+    jobs:
+      - job: Pool_Plan
+        displayName: Agent Pool Plan
+        steps:
+          - checkout: self
+            displayName: 'Checkout'
+
+          - template: steps/azure_auth.yml@templates
+            parameters:
+              subscriptionId: $(TOOLING_SUBSCRIPTION_ID)
+
+          - script: terraform init -input=false
+            displayName: Terraform Init
+            workingDirectory: infrastructure-agents
+            env:
+              ARM_CLIENT_ID: $(AZURE_SERVICE_PRINCIPAL_ID)
+              ARM_CLIENT_SECRET: $(AZURE_SERVICE_PRINCIPAL_SECRET)
+              ARM_SUBSCRIPTION_ID: $(TOOLING_SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(AZURE_TENANT_ID)
+
+          - script: terraform plan -input=false -out=${{ variables.planFileName }}
+            displayName: Terraform Plan
+            workingDirectory: infrastructure-agents
+            env:
+              TF_VAR_subscription_id: $(TOOLING_SUBSCRIPTION_ID)
+              ARM_CLIENT_ID: $(AZURE_SERVICE_PRINCIPAL_ID)
+              ARM_CLIENT_SECRET: $(AZURE_SERVICE_PRINCIPAL_SECRET)
+              ARM_SUBSCRIPTION_ID: $(TOOLING_SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(AZURE_TENANT_ID)
+
+          - task: CopyFiles@2
+            displayName: Create plan artifact
+            inputs:
+              SourceFolder: infrastructure-agents
+              Contents: |
+                !.git
+                !**/.terraform/**
+                **/**
+              TargetFolder: $(Build.ArtifactStagingDirectory)
+          - publish: $(Build.ArtifactStagingDirectory)
+            artifact: terraform-plan
+            displayName: Publish plan artifact
+
+  - stage: Pool_Apply
+    dependsOn: Pool_Plan
+    displayName: Agent Pool Apply
+    jobs:
+      - deployment: Pool_Apply
+        displayName: Agent Pool Apply
+        environment: Tooling
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  displayName: 'Checkout'
+
+                - template: steps/azure_auth.yml@templates
+                  parameters:
+                    subscriptionId: $(TOOLING_SUBSCRIPTION_ID)
+
+                - download: current
+                  artifact: terraform-plan
+                - task: CopyFiles@2
+                  inputs:
+                    sourceFolder: $(Pipeline.Workspace)/terraform-plan
+                    contents: '**'
+                    targetFolder: infrastructure-agents
+                - script: |
+                    /bin/chmod -R +x .
+                  workingDirectory: infrastructure-agents
+                  displayName: Set File Perms
+
+                - script: |
+                    echo "Deploying Terraform..."
+                    echo "##[command]terraform apply -input=false ${{ variables.planFileName }}"
+                    terraform apply -auto-approve -input=false ${{ variables.planFileName }}
+                  displayName: 'Terraform Apply'
+                  workingDirectory: infrastructure-agents
+                  env:
+                    ARM_CLIENT_ID: $(AZURE_SERVICE_PRINCIPAL_ID)
+                    ARM_CLIENT_SECRET: $(AZURE_SERVICE_PRINCIPAL_SECRET)
+                    ARM_SUBSCRIPTION_ID: $(TOOLING_SUBSCRIPTION_ID)
+                    ARM_TENANT_ID: $(AZURE_TENANT_ID)
