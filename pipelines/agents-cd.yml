@@ -15,9 +15,9 @@ extends:
   parameters:
     # state blob is named from the environment: agents.tfstate
     environments:
-      - name: -agents
-    automaticDeploymentEnvironments:
-      - name: -agents
+      - name: Agents
+    # automaticDeploymentEnvironments:
+    #   - name: Aagents
     poolNameFormatString: pins-odt-agent-pool
     serviceConnectionCustomFormatString: Azure DevOps Pipelines - Core Services - Tooling
     storageAccountName: pinsstsharedtfstateuks
