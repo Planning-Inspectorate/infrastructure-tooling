@@ -25,10 +25,11 @@ extends:
     serviceConnectionCustomFormatString: Azure DevOps Pipelines - Core Services - Tooling
     storageAccountName: pinsstsharedtfstateuks
     resourceGroupName: pins-rg-shared-terraform-uks
+    # containerPrefix: terraform-state-devops-template-packer-
     containerFormatString: terraformstate
     workingDirectory: $(Build.Repository.LocalPath)/infrastructure-agents
-    extraEnvironmentVariables:
-      - name: ARM_SUBSCRIPTION_ID
-        value: $(TOOLING_SUBSCRIPTION_ID)
-      - name: TF_VAR_subscription_id
-        value: $(TOOLING_SUBSCRIPTION_ID)
+    # extraEnvironmentVariables:
+    #   - name: ARM_SUBSCRIPTION_ID
+    #     value: $(TOOLING_SUBSCRIPTION_ID)
+    #   - name: TF_VAR_subscription_id
+    #     value: $(TOOLING_SUBSCRIPTION_ID)
