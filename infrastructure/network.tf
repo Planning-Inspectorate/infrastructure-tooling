@@ -7,14 +7,6 @@ resource "azurerm_virtual_network" "tooling" {
   tags = local.tags
 }
 
-resource "azurerm_subnet" "azure_agents" {
-  name                              = "pins-snet-azure-agents-${local.resource_suffix}"
-  resource_group_name               = azurerm_resource_group.tooling.name
-  virtual_network_name              = azurerm_virtual_network.tooling.name
-  address_prefixes                  = ["10.10.0.0/24"] # 256 IPs
-  private_endpoint_network_policies = "Enabled"
-}
-
 resource "azurerm_subnet" "GatewaySubnet" {
   name                              = "GatewaySubnet"
   resource_group_name               = azurerm_resource_group.tooling.name

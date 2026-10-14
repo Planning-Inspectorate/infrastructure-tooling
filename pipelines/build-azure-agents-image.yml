@@ -11,7 +11,7 @@ resources:
       type: github
       endpoint: Planning-Inspectorate
       name: Planning-Inspectorate/common-pipeline-templates
-      ref: refs/tags/release/3.21.2
+      ref: refs/tags/release/3.30.0
 
 variables:
   - group: tooling_pipelines
@@ -25,7 +25,7 @@ jobs:
           subscriptionId: $(TOOLING_SUBSCRIPTION_ID)
       - script: packer init .
         displayName: Packer init
-        workingDirectory: $(Build.Repository.LocalPath)/packer/azure-agents
+        workingDirectory: $(Build.Repository.LocalPath)/infrastructure-agents/configuration/
       - script: packer build .
         displayName: Packer Build
         env:
@@ -34,7 +34,7 @@ jobs:
           PKR_VAR_subscription_id: $(TOOLING_SUBSCRIPTION_ID)
           PKR_VAR_tenant_id: $(AZURE_TENANT_ID)
           PKR_VAR_tooling_resource_group_name: $(toolingResourceGroupName)
-        workingDirectory: $(Build.Repository.LocalPath)/packer/azure-agents
+        workingDirectory: $(Build.Repository.LocalPath)/infrastructure-agents/configuration/
     variables:
       toolingResourceGroupName: pins-rg-shared-tooling-uks
     workspace:

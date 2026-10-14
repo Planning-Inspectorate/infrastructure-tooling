@@ -1,0 +1,39 @@
+trigger: none
+pr: none
+
+resources:
+  repositories:
+    - repository: templates
+      type: github 
+      endpoint: Planning-Inspectorate
+      name: Planning-Inspectorate/common-pipeline-templates
+      ref: refs/tags/release/3.30.0
+
+extends:
+  template: stages/wrapper_cd.yml@templates
+  parameters:
+    variableGroupPrefix: 'cd_infra'
+    deploymentStages:
+      - name: Terraform Plan
+        deploymentJobs:
+          - name: Terraform Plan
+            isDeployment: false
+            timeoutInMinutes: 30
+            steps:
+              - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_plan.yml@templates
+                parameters:
+                  subscriptionId: $(SUBSCRIPTION_ID)
+                  workingDirectory: $(Build.Repository.LocalPath)/infrastructure-agents
+      - name: Terraform Apply
+        dependsOn:
+          - Terraform Plan
+        deploymentJobs:
+          - name: Terraform Apply
+            steps:
+              - template: ${{variables['Build.SourcesDirectory']}}/steps/terraform_apply.yml@templates
+                parameters:
+                  subscriptionId: $(SUBSCRIPTION_ID)
+    environments:
+      - name: Tooling
+    pool:
+      vmImage: ubuntu-22.04
