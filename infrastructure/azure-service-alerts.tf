@@ -37,3 +37,51 @@ resource "azurerm_monitor_activity_log_alert" "tooling_service_health" {
 
   tags = local.tags
 }
+
+resource "azurerm_monitor_activity_log_alert" "odt_prod_service_health" {
+  name                = "Azure Service health - odt-prod"
+  resource_group_name = data.azurerm_resource_group.common_prod.name
+  scopes              = [data.azurerm_subscription.prod.id]
+  enabled             = true
+  location            = "global"
+
+  criteria {
+    category = "ServiceHealth"
+    service_health {
+      events    = ["Incident"]
+      locations = ["Global", "UK South", "UK West", "Sweden Central"]
+    }
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.azure_service_alerts.id
+  }
+
+  provider = azurerm.prod
+
+  tags = local.tags
+}
+
+resource "azurerm_monitor_activity_log_alert" "odw_data_prod_service_health" {
+  name                = "Azure Service health - odw-data-prod"
+  resource_group_name = data.azurerm_resource_group.odw_monitoring.name
+  scopes              = [data.azurerm_subscription.odw_data_prod.id]
+  enabled             = true
+  location            = "global"
+
+  criteria {
+    category = "ServiceHealth"
+    service_health {
+      events    = ["Incident"]
+      locations = ["Global", "UK South", "UK West", "Sweden Central"]
+    }
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.azure_service_alerts.id
+  }
+
+  provider = azurerm.odw_data_prod
+
+  tags = local.tags
+}
