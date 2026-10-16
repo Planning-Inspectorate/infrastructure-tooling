@@ -37,5 +37,12 @@ provider "azurerm" {
   features {}
 }
 
+provider "azurerm" {
+  alias           = "odw_data_prod"
+  subscription_id = "a82fd28d-5989-4e06-a0bb-1a5d859f9e0c"
+
+  features {}
+}
+
 provider "azapi" {
 }
