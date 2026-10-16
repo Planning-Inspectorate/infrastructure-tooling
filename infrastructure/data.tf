@@ -2,6 +2,24 @@ data "azurerm_client_config" "current" {}
 
 data "azurerm_subscription" "current" {}
 
+data "azurerm_subscription" "prod" {
+  provider = azurerm.prod
+}
+
+data "azurerm_subscription" "odw_data_prod" {
+  provider = azurerm.odw_data_prod
+}
+
+data "azurerm_resource_group" "common_prod" {
+  provider = azurerm.prod
+  name     = "pins-rg-common-prod"
+}
+
+data "azurerm_resource_group" "odw_monitoring" {
+  provider = azurerm.odw_data_prod
+  name     = "pins-rg-monitoring-odw-prod-uks"
+}
+
 data "azurerm_image" "azure_agents" {
   name                = "azure-agents-gen2-2026-10-13-0902"
   resource_group_name = azurerm_resource_group.tooling.name
