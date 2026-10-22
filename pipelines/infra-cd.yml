@@ -10,7 +10,7 @@ resources:
       type: github
       endpoint: Planning-Inspectorate
       name: Planning-Inspectorate/common-pipeline-templates
-      ref: refs/tags/release/3.21.2
+      ref: refs/tags/release/3.30.0
 
 extends:
   template: stages/wrapper_cd.yml@templates
@@ -38,5 +38,3 @@ extends:
                   subscriptionId: $(SUBSCRIPTION_ID)
     environments:
       - name: Tooling
-    pool:
-      vmImage: ubuntu-22.04    #ubuntu-latest by default does not have Terraform installed

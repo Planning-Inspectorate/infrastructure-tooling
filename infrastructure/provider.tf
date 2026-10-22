@@ -6,10 +6,10 @@ terraform {
     }
     azapi = {
       source  = "azure/azapi"
-      version = "2.10.0"
+      version = "2.12.0"
     }
   }
-  required_version = ">= 1.11.0, < 1.16.0"
+  required_version = ">= 1.11.0, < 1.17.0"
 }
 
 provider "azurerm" {
@@ -33,6 +33,13 @@ provider "azurerm" {
 provider "azurerm" {
   alias           = "prod"
   subscription_id = "d1d6c393-2fe3-40af-ac27-f5b6bad36735"
+
+  features {}
+}
+
+provider "azurerm" {
+  alias           = "odw_data_prod"
+  subscription_id = "a82fd28d-5989-4e06-a0bb-1a5d859f9e0c"
 
   features {}
 }

@@ -10,6 +10,7 @@ resource "azurerm_key_vault" "tooling_key_vault" {
   purge_protection_enabled    = true
   soft_delete_retention_days  = 7
   tenant_id                   = data.azurerm_client_config.current.tenant_id
+  rbac_authorization_enabled  = false
 
   sku_name = "standard"
 
@@ -37,25 +38,4 @@ resource "azurerm_key_vault_access_policy" "admins" {
   key_permissions         = ["Create", "Get", "List"]
   secret_permissions      = ["Get", "List", "Set"]
   storage_permissions     = ["Get", "List", "Set"]
-}
-
-resource "random_password" "agents_admin_password" {
-  length  = 20
-  special = true
-}
-
-resource "azurerm_key_vault_secret" "agents_admin_password" {
-  #checkov:skip=CKV_AZURE_41: TODO: Secret rotation
-  content_type = "text/plain"
-  key_vault_id = azurerm_key_vault.tooling_key_vault.id
-  name         = "agents-admin-password"
-  value        = random_password.agents_admin_password.result
-
-  tags = local.tags
-
-  lifecycle {
-    ignore_changes = [
-      value
-    ]
-  }
 }
