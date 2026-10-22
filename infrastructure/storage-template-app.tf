@@ -26,7 +26,7 @@ resource "azurerm_storage_account" "template_app_terraform_storage" {
     bypass                     = ["AzureServices"]
     virtual_network_subnet_ids = [azurerm_subnet.azure_agents.id]
   }
-  allow_nested_items_to_be_public  = false
+  allow_nested_items_to_be_public = false
 
   tags = local.tags
 }
