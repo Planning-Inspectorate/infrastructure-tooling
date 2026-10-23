@@ -31,7 +31,7 @@ resource "azurerm_private_endpoint" "state_file" {
   name                = "pins-pe-${each.key}-${local.resource_suffix}"
   location            = azurerm_resource_group.tooling.location
   resource_group_name = azurerm_resource_group.tooling.name
-  subnet_id           = azurerm_subnet.azure_agents.id
+  subnet_id           = data.azurerm_subnet.azure_agents.id
 
   private_dns_zone_group {
     name                 = "state-file-private-dns-zone-group-${each.key}"
