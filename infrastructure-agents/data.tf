@@ -13,12 +13,12 @@ data "azurerm_virtual_network" "tooling" {
 }
 
 data "azurerm_image" "azure_agents" {
-  name                = "azure-agents-gen2-2026-10-13-0902"
+  name                = "azure-agents-gen2-2026-10-22-1309"
   resource_group_name = data.azurerm_resource_group.tooling.name
 }
 
 data "azurerm_image" "azure_agents_test" {
-  name                = "azure-agents-gen2-2026-10-13-0902"
+  name                = "azure-agents-gen2-2026-10-22-1309"
   resource_group_name = data.azurerm_resource_group.tooling.name
 }
 
