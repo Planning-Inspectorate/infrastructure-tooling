@@ -19,3 +19,9 @@ data "azurerm_resource_group" "odw_monitoring" {
   provider = azurerm.odw_data_prod
   name     = "pins-rg-monitoring-odw-prod-uks"
 }
+
+data "azurerm_subnet" "azure_agents" {
+  name                 = "pins-snet-azure-agents-shared-tooling-uks"
+  virtual_network_name = "pins-vnet-shared-tooling-uks"
+  resource_group_name  = "pins-rg-shared-tooling-uks"
+}
