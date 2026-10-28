@@ -20,6 +20,12 @@ resource "azurerm_storage_account" "template_app_terraform_storage" {
   min_tls_version                  = "TLS1_2"
   cross_tenant_replication_enabled = true
   allow_nested_items_to_be_public  = false
+  public_network_access_enabled    = false
+
+  network_rules {
+    default_action = "Deny"
+    bypass         = ["AzureServices"]
+  }
 
   tags = local.tags
 }
