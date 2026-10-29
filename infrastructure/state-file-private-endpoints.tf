@@ -1,8 +1,3 @@
-data "azurerm_storage_account" "shared_terraform_storage" { # Infrastructure Environments Terragrunt(ODT & ODW)
-  name                = "pinsstsharedtfstateuks"
-  resource_group_name = local.shared_terraform_resource_group
-}
-
 locals {
   state_file_storage_accounts = {
     "pinsstsharedtfstateuks"   = azurerm_storage_account.shared_terraform_storage.id
