@@ -132,6 +132,7 @@ export PATH="$PATH:$NVM_DIR"
 EOT
 
 # Node versions
+nvm install 26
 nvm install 24
 nvm install 22
 nvm install 20
